@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Personal JARVIS AI - futuristic personal assistant dashboard" />
+  <title>JARVIS // Personal AI</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="bg-grid"></div><div class="orb orb-a"></div><div class="orb orb-b"></div>
+  <header class="topbar glass">
+    <div class="brand"><div class="brand-core">J</div><div><strong>JARVIS</strong><span>PERSONAL AI SYSTEM</span></div></div>
+    <div class="top-status"><span class="live-dot"></span><span id="systemState">SYSTEM ONLINE</span><span class="divider"></span><span id="clock">--:--:--</span></div>
+    <button class="icon-btn" id="lockBtn" title="Lock interface">⌾</button>
+    <button class="icon-btn" id="settingsBtn" title="Settings">⚙</button>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar glass">
+      <button class="nav-btn active" data-view="dashboard">◈ <span>Dashboard</span></button>
+      <button class="nav-btn" data-view="chat">✦ <span>Ask JARVIS</span></button>
+      <button class="nav-btn" data-view="files">▣ <span>My Files</span></button>
+      <button class="nav-btn" data-view="memory">◉ <span>Memory</span></button>
+      <button class="nav-btn" data-view="tasks">✓ <span>Tasks</span></button>
+      <button class="nav-btn" data-view="settings">⚙ <span>Settings</span></button>
+      <div class="sidebar-bottom"><div class="mini-label">AI CORE</div><div class="ai-chip"><span class="live-dot"></span><span>READY</span></div></div>
+    </aside>
+
+    <section class="content">
+      <section class="view active" id="dashboardView">
+        <div class="hero glass"><div><p class="eyebrow">PERSONAL INTELLIGENCE HUB</p><h1>Good <span id="greeting">evening</span>, <em>Commander.</em></h1><p class="muted">Your personal AI operating assistant is ready.</p></div><div class="core-ring"><div class="core-inner">J</div></div></div>
+        <div class="quick-grid">
+          <button class="quick glass" data-action="chat"><b>✦</b><span>Ask JARVIS</span><small>Start conversation</small></button>
+          <button class="quick glass" data-action="files"><b>▣</b><span>Upload File</span><small>Open file vault</small></button>
+          <button class="quick glass" data-action="tasks"><b>✓</b><span>My Tasks</span><small>Plan your day</small></button>
+          <button class="quick glass" data-action="settings"><b>⚙</b><span>Settings</span><small>Customize system</small></button>
+        </div>
+        <div class="dashboard-grid">
+          <div class="panel glass"><div class="panel-head"><h2>System Status</h2><span class="badge ok">ONLINE</span></div><div class="metrics"><div><span>AI CORE</span><strong>READY</strong></div><div><span>NETWORK</span><strong>CONNECTED</strong></div><div><span>SECURITY</span><strong>PROTECTED</strong></div><div><span>MEMORY</span><strong>LOCAL</strong></div></div></div>
+          <div class="panel glass"><div class="panel-head"><h2>Today's Focus</h2><button class="text-btn" data-action="tasks">View all →</button></div><div id="focusList" class="focus-list"><div class="empty">No tasks yet. Add your first task from Tasks.</div></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="chatView"><div class="section-title"><div><p class="eyebrow">AI CONSOLE</p><h1>Ask JARVIS</h1></div><span class="badge ok">READY</span></div><div class="chat glass"><div class="messages" id="messages"><div class="message ai"><div class="avatar">J</div><div><span class="who">JARVIS</span><p>Systems online. How may I assist you?</p></div></div></div><form class="chat-form" id="chatForm"><button type="button" class="voice-btn" id="voiceBtn" title="Voice input">🎙</button><input id="chatInput" autocomplete="off" placeholder="Speak or type a command..."/><button class="send-btn">SEND</button></form></div></section>
+
+      <section class="view" id="filesView"><div class="section-title"><div><p class="eyebrow">PERSONAL FILE VAULT</p><h1>My Files</h1></div><label class="upload-btn">＋ Upload<input type="file" id="fileInput" multiple hidden></label></div><div class="file-grid glass" id="fileGrid"><div class="empty">Your local file vault is empty. Upload a file to begin.</div></div><p class="notice">Phase 1 stores the file list locally in your browser. Secure cloud storage and AI document reading will be added in later phases.</p></section>
+
+      <section class="view" id="memoryView"><div class="section-title"><div><p class="eyebrow">PERSONAL MEMORY</p><h1>Memory</h1></div></div><div class="memory-layout"><div class="panel glass"><h2>Save a memory</h2><textarea id="memoryInput" placeholder="Example: I prefer concise answers in Bengali."></textarea><button class="primary" id="saveMemory">Save Memory</button></div><div class="panel glass"><h2>Stored memories</h2><div id="memoryList" class="memory-list"></div></div></div><p class="notice">Memory in this prototype is stored only in this browser using localStorage. Sensitive information should not be stored here yet.</p></section>
+
+      <section class="view" id="tasksView"><div class="section-title"><div><p class="eyebrow">PERSONAL PLANNER</p><h1>Tasks</h1></div></div><div class="panel glass"><form class="task-form" id="taskForm"><input id="taskInput" placeholder="Add a task..." required/><button class="primary">ADD TASK</button></form><div id="taskList" class="task-list"></div></div></section>
+
+      <section class="view" id="settingsView"><div class="section-title"><div><p class="eyebrow">CONTROL CENTER</p><h1>Settings</h1></div></div><div class="settings-grid"><div class="panel glass"><h2>Appearance</h2><label class="setting"><span>Glass intensity</span><input id="glassRange" type="range" min="10" max="40" value="24"></label><label class="setting"><span>Glow intensity</span><input id="glowRange" type="range" min="0" max="100" value="55"></label><label class="setting"><span>Animations</span><input id="animToggle" type="checkbox" checked></label><label class="setting"><span>UI sounds</span><input id="soundToggle" type="checkbox"></label></div><div class="panel glass"><h2>System Controls</h2><label class="setting"><span>Voice assistant</span><input type="checkbox" checked></label><label class="setting"><span>Notifications</span><input type="checkbox" checked></label><label class="setting"><span>Location</span><input type="checkbox"></label><label class="setting"><span>Transparent mode</span><input id="transparentToggle" type="checkbox" checked></label></div><div class="panel glass"><h2>Security</h2><p class="muted">Layered security architecture placeholder for authentication, permissions, sessions and emergency lock.</p><button class="danger" id="emergencyBtn">EMERGENCY LOCK</button></div></div></section>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div><div class="lock-screen" id="lockScreen"><div class="lock-card glass"><div class="core-ring small"><div class="core-inner">J</div></div><h2>JARVIS LOCKED</h2><p>Tap unlock to return to the interface.</p><button class="primary" id="unlockBtn">UNLOCK</button></div></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
