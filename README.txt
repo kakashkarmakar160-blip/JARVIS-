@@ -1,21 +1,9 @@
-AKASH'S AI • JARVIS INTERNAL V7
+Akash AI JARVIS Internal V8
 
-This build is intentionally self-contained on the frontend:
-- All CSS is inside index.html <style>
-- All frontend JavaScript is inside index.html <script>
-- No external CSS/JS libraries are required.
+Base: Akash-AI-JARVIS-Internal-V7. Existing inline SVG icons are preserved.
 
-Reference-driven UI:
-- Holographic globe/core at the top
-- Futuristic app icons and cards
-- Longer chat area showing multiple messages
-- Surroundings radar at the bottom
-- Notification Center with today's demo notifications
-- Settings with app/notification toggles and API-key field
-- 10-second visual biometric/retina-style demo, no biometric matching
-- Password gate: AK@111
-- File Vault with local browser metadata storage
-- Memory and user-defined risky-location rules
+Includes: 10-second visual camera scan + password gate, startup audio, responsive HUD dashboard, live Gemini option via locally entered key, real ChatGPT/Gemini external sites, calendar notes/tasks, local file vault via IndexedDB, live browser location, screenshot capture, notification center, settings app filters, and Smart Home cyber simulation.
 
-IMPORTANT:
-The browser cannot directly read Android app notifications, background location, or native permissions. Those require the Android companion/bridge and/or secure backend. The API key field is only a frontend demo; production API keys must remain server-side.
+Password: AK@111
+
+Security note: the retina/eye scan is a visual demo only, not biometric identification. A static website cannot access Android-wide notifications or protected permissions; those require the Android bridge. A frontend Gemini API key can be exposed, so use a secure backend proxy for production.
