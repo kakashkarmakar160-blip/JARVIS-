@@ -1,17 +1,29 @@
-# JARVIS Personal AI Web v2
+# JARVIS — GitHub Pages Internal Edition
 
-Futuristic responsive JARVIS website with a visual-only retina-style intro, password gate, Gemini backend, Bengali/English chat, voice hooks, notification-monitor configuration, memory, files, contacts, planner, alerts, permissions and settings.
+তোমার screenshot-এ website-এর CSS/JS load হয়নি। তাই এই edition-এ **পুরো website-এর HTML + CSS + JavaScript একই `index.html` ফাইলে internal/inline করা হয়েছে**।
 
-## Run
-1. Copy `.env.example` to `.env`.
-2. Put your Gemini API key in `.env`.
-3. Keep `JARVIS_PASSWORD=AK@111` or change it.
-4. `npm install`
-5. `npm start`
-6. Open `http://localhost:3000`
+## GitHub Pages
+শুধু `index.html` GitHub Pages-এ upload/publish করলেই UI ঠিকভাবে render হবে। আলাদা `css/` বা `js/` file লাগবে না।
 
-The retina screen is only a demo animation; it performs no biometric matching.
+### Password
+Visual retina-style boot animation-এর পরে:
+`AK@111`
 
-A normal website cannot read other Android apps' private databases or Android Notification Access data. The Notification Monitor UI is the control/dashboard layer; real cross-app monitoring requires an Android/native bridge or companion app.
+**নোট:** GitHub Pages static হওয়ায় এই password client-side। এটি real server security নয়।
 
-For production, use HTTPS and a secure server-side password/secret. Never expose Gemini keys in frontend code.
+## Android Notification Access
+GitHub Pages নিজে Android Notification Access পড়তে পারে না। Real notification monitoring-এর জন্য আলাদা backend + Android Notification Bridge প্রয়োজন।
+
+Settings → Backend / Bridge URL → তোমার backend URL
+Settings → Bridge Token → backend-এর bridge token
+
+তারপর Android Bridge-এ একই URL/token দিয়ে Notification Access ON করতে হবে।
+
+## Gemini
+Gemini API key browser-এর `index.html`-এ রাখা হয়নি। AI request backend-এর মাধ্যমে করা উচিত।
+
+## Included backend
+`backend/server.js` একটি backend foundation হিসেবে রাখা হয়েছে। এটাকে Node.js server-এ চালাতে হবে। GitHub Pages-এ `server.js` চালানো যায় না।
+
+## গুরুত্বপূর্ণ
+Public GitHub repository-তে API key বা secret bridge token commit কোরো না।

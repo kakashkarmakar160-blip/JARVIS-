@@ -1,20 +1,148 @@
-<!doctype html><html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#06101c"><title>JARVIS • Personal AI</title>
-<link rel="stylesheet" href="/css/style.css"></head><body>
-<div id="bootScreen" class="boot"><div class="grid"></div><div class="ring a"></div><div class="ring b"></div><div class="ring c"></div><div class="eye"><i></i></div><div class="scan"></div>
-<div class="bootTitle">JARVIS SECURITY GATE</div><div class="bootSub">RETINA-STYLE VISUAL SCAN • DEMO ONLY</div><div id="bootStatus" class="bootStatus">INITIALIZING...</div><button id="continueBoot" class="ghost" hidden>CONTINUE</button></div>
-<div id="lockScreen" class="lock hidden"><div class="lockCard glass"><div class="orb">J</div><div class="eyebrow">PERSONAL AI OPERATING SYSTEM</div><h1>JARVIS</h1><p>Secure access required</p><form id="loginForm"><input id="passwordInput" type="password" placeholder="Enter access password" autocomplete="current-password"><button class="primary">UNLOCK JARVIS</button><div id="loginError" class="error"></div></form><small>Retina animation is visual only. No biometric matching.</small></div></div>
-<div id="app" class="hidden"><aside class="side glass"><div class="brand"><div class="orb">J</div><b>JARVIS</b></div><nav>
-<button data-page="dashboard" class="active">◈ Dashboard</button><button data-page="chat">✦ AI Chat</button><button data-page="notifications">◉ Notification Monitor</button><button data-page="memory">◎ Memory</button><button data-page="files">▣ Files</button><button data-page="contacts">♧ Contacts</button><button data-page="planner">◷ Planner</button><button data-page="permissions">⚿ Permission Center</button><button data-page="settings">⚙ Settings</button></nav><button id="lockBtn">▣ Lock Session</button></aside>
-<main><header class="top glass"><div><div class="eyebrow">PERSONAL AI OPERATING SYSTEM</div><h2 id="title">Dashboard</h2></div><div><button id="voiceToggle" class="icon">🎙</button><span class="avatar">AK</span></div></header>
-<section id="page-dashboard" class="page active"><div class="hero glass"><div><div class="eyebrow">WELCOME BACK</div><h1>Good to see you, <span>Akash.</span></h1><p>JARVIS is ready to assist with AI, memory, files, notifications and your daily workflow.</p><button data-open-chat class="primary">Start Conversation</button></div><div class="hud">AI CORE</div></div><div class="cards"><div class="stat glass">AI STATUS<strong class="ok">ONLINE</strong><small id="modelStatus">Gemini</small></div><div class="stat glass">MEMORY<strong id="memoryCount">0</strong><small>saved items</small></div><div class="stat glass">MONITORED APPS<strong id="monitorCount">0</strong><small>selected</small></div><div class="stat glass">ALERTS<strong id="alertCount">0</strong><small>active</small></div></div><div class="twos"><div class="panel glass"><h3>Quick Commands</h3><div class="quick"><button data-cmd="Tell me today's important tasks.">Today's Tasks</button><button data-cmd="Summarize my important notifications.">Important Notifications</button><button data-cmd="What do you remember about my project?">My Memory</button><button data-cmd="Help me organize my day.">Plan My Day</button></div></div><div class="panel glass"><h3>System Readiness</h3><div class="rows"><div>AI connection <b>Ready</b></div><div>Voice interface <b>Browser supported</b></div><div>Browser notifications <b id="notifStatus">Not checked</b></div></div></div></div></section>
-<section id="page-chat" class="page"><div class="chat glass"><div id="messages" class="messages"><div class="msg jarvis"><span>JARVIS</span>Hello Akash. I am ready. How can I assist you?</div></div><form id="chatForm" class="composer"><button type="button" id="mic" class="icon">🎙</button><textarea id="input" placeholder="Talk to JARVIS..."></textarea><button class="primary">SEND</button></form></div></section>
-<section id="page-notifications" class="page"><div class="panel glass"><div class="head"><div><h3>Notification Monitor</h3><p>Select which apps you want JARVIS to monitor in this configuration.</p></div><button id="browserNotif" class="secondary">Allow Browser Alerts</button></div><div id="apps"></div><div class="info">A normal website cannot read Android Notification Access data or private databases. This is the central control surface; a native Android bridge is required for real cross-app monitoring.</div></div><div class="twos"><div class="panel glass"><h3>Recent Alerts</h3><div id="alerts"></div></div><div class="panel glass"><h3>Alert Rules</h3><div class="rows"><label>Important messages <input type="checkbox" checked></label><label>Security alerts <input type="checkbox" checked></label><label>Battery critical <input type="checkbox" checked></label><label>Planner reminders <input type="checkbox" checked></label></div></div></div></section>
-<section id="page-memory" class="page"><div class="panel glass"><div class="head"><h3>Personal Memory</h3><button id="addMemory" class="primary">+ Save Memory</button></div><div id="memories"></div></div></section>
-<section id="page-files" class="page"><div class="panel glass"><div class="head"><div><h3>File Center</h3><p>Choose files through the browser picker.</p></div><label class="primary">+ Add Files<input id="files" type="file" multiple hidden></label></div><div id="fileList"></div><div class="info">A website cannot silently read arbitrary phone storage.</div></div></section>
-<section id="page-contacts" class="page"><div class="panel glass"><div class="head"><div><h3>Contacts</h3><p>Browser Contact Picker support varies by device/browser.</p></div><button id="contacts" class="secondary">Choose Contacts</button></div><div id="contactList" class="empty">No contacts loaded.</div></div></section>
-<section id="page-planner" class="page"><div class="panel glass"><div class="head"><h3>Planner</h3><button id="addTask" class="primary">+ Add Task</button></div><div id="tasks"></div></div></section>
-<section id="page-permissions" class="page"><div class="twos"><div class="panel glass"><h3>Permission Center</h3><div id="permissions"></div></div><div class="panel glass"><h3>Privacy</h3><div class="rows"><div>Gemini API key in frontend <b>Blocked</b></div><div>Microphone <b id="micStatus">Not checked</b></div><div>Location <b id="locStatus">Not checked</b></div></div></div></div></section>
-<section id="page-settings" class="page"><div class="twos"><div class="panel glass"><h3>Appearance</h3><div class="rows"><label>Glass mode <input id="glass" type="checkbox" checked></label><label>Animations <input id="anim" type="checkbox" checked></label><label>Compact layout <input id="compact" type="checkbox"></label></div></div><div class="panel glass"><h3>AI Configuration</h3><div class="rows"><div>Provider <b>Gemini</b></div><div>Model <b id="settingsModel">Loading...</b></div><div>Owner <b>Akash Karmakar</b></div></div></div></div></section>
-</main></div><script src="/js/app.js"></script></body></html>
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#030711">
+<title>JARVIS • Personal AI Command Center</title>
+<style>
+:root{--bg:#030711;--panel:rgba(8,18,31,.72);--line:rgba(83,224,255,.22);--cyan:#57eaff;--text:#e9fbff;--muted:#83a1aa;--danger:#ff5d7a;--ok:#63ffb0;--shadow:0 20px 70px rgba(0,0,0,.45)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text)}
+body{overflow-x:hidden;background:
+radial-gradient(circle at 50% -10%,rgba(45,190,255,.18),transparent 38%),
+radial-gradient(circle at 0 100%,rgba(0,120,255,.08),transparent 35%),
+linear-gradient(135deg,#02050a,#06121d 55%,#02050a)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 90%);z-index:-1}
+button,input,select{font:inherit}
+button{border:1px solid var(--line);color:var(--text);background:rgba(13,35,52,.78);border-radius:12px;padding:11px 15px;cursor:pointer;transition:.2s}
+button:hover{border-color:rgba(87,234,255,.65);box-shadow:0 0 24px rgba(87,234,255,.14);transform:translateY(-1px)}
+input,select{width:100%;border:1px solid var(--line);outline:0;color:var(--text);background:rgba(2,9,17,.78);border-radius:12px;padding:12px 14px}
+input:focus{border-color:rgba(87,234,255,.65);box-shadow:0 0 20px rgba(87,234,255,.08)}
+.hidden{display:none!important}
+.boot{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#02060b;transition:opacity .7s}
+.boot.hide{opacity:0;pointer-events:none}
+.bootCore{position:relative;width:210px;height:210px;border-radius:50%;border:1px solid rgba(87,234,255,.65);box-shadow:0 0 70px rgba(87,234,255,.15),inset 0 0 45px rgba(87,234,255,.08)}
+.bootCore:before,.bootCore:after{content:"";position:absolute;inset:23px;border:1px solid rgba(87,234,255,.28);border-radius:50%}
+.bootCore:after{inset:55px;border-color:rgba(87,234,255,.55);box-shadow:0 0 30px rgba(87,234,255,.25)}
+.scan{position:absolute;left:8%;right:8%;height:2px;top:0;background:var(--cyan);box-shadow:0 0 20px var(--cyan);animation:scan 1.6s linear infinite}
+.bootLabel{position:absolute;top:calc(50% + 135px);width:100%;text-align:center;letter-spacing:.28em;font-size:11px;color:#9ed9e5}
+@keyframes scan{to{top:100%}}
+.shell{max-width:1450px;margin:auto;padding:22px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:13px}.orb{width:48px;height:48px;border-radius:50%;border:1px solid var(--cyan);box-shadow:0 0 25px rgba(87,234,255,.25);position:relative}.orb:after{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--cyan);box-shadow:0 0 22px var(--cyan)}
+.eyebrow{font-size:10px;letter-spacing:.25em;color:#6f909a}.brand h1{font-size:28px;margin:2px 0;letter-spacing:.16em}.topActions{display:flex;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow),inset 0 0 35px rgba(87,234,255,.025);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.gate{max-width:600px;margin:10vh auto;padding:28px}.gate h2{margin:0 0 6px;font-size:28px}.sub{color:var(--muted);font-size:13px;line-height:1.55}.formrow{display:flex;gap:9px;margin-top:18px}.formrow button{white-space:nowrap}
+.dashboard{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.wide{grid-column:1/-1}.cardPad{padding:20px}
+.cardTitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.cardTitle h2{margin:0;font-size:16px;letter-spacing:.08em}.badge{font-size:10px;padding:6px 9px;border:1px solid var(--line);border-radius:99px;color:#9feaf5}
+.status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#ff647e;box-shadow:0 0 12px #ff647e}.dot.ok{background:var(--ok);box-shadow:0 0 12px var(--ok)}
+.toolbar{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-bottom:12px}.notices{max-height:54vh;overflow:auto;padding-right:4px}.notice{padding:13px;border:1px solid rgba(255,255,255,.06);border-left:2px solid var(--cyan);border-radius:13px;background:rgba(255,255,255,.025);margin:8px 0}.noticeTop{display:flex;justify-content:space-between;gap:8px}.app{font-weight:700}.time{font-size:10px;color:var(--muted)}.title{margin-top:5px;font-size:13px}.text{margin-top:4px;color:#c4d8dd;font-size:12px;line-height:1.45}.empty{padding:35px 15px;text-align:center;color:var(--muted);border:1px dashed rgba(87,234,255,.18);border-radius:14px}
+.chat{min-height:470px;display:flex;flex-direction:column}.chatlog{flex:1;max-height:55vh;overflow:auto}.bubble{padding:11px 13px;border-radius:14px;background:rgba(255,255,255,.035);margin:8px 0;font-size:13px;line-height:1.5}.bubble b{font-size:10px;letter-spacing:.12em;color:#77eaff}.chatrow{display:flex;gap:8px;margin-top:12px}.chatrow input{flex:1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:14px;border:1px solid rgba(87,234,255,.12);border-radius:14px;background:rgba(255,255,255,.025)}.stat b{display:block;font-size:21px}.stat span{font-size:10px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.62);display:grid;place-items:center;z-index:50;padding:20px}.modal .box{width:min(620px,100%);padding:22px}.field{margin:12px 0}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}.hint{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px}
+.toast{position:fixed;right:16px;bottom:16px;z-index:70;padding:12px 15px;border-radius:12px;background:#071925;border:1px solid var(--line);box-shadow:var(--shadow);font-size:12px}
+@media(max-width:900px){.shell{padding:12px}.dashboard{grid-template-columns:1fr}.wide{grid-column:auto}.stats{grid-template-columns:repeat(2,1fr)}.topbar{align-items:flex-start}.brand h1{font-size:23px}.orb{width:42px;height:42px}.topActions button{padding:9px 10px}.toolbar{grid-template-columns:1fr 1fr}.toolbar select{grid-column:1/-1}.formrow{flex-direction:column}.gate{margin:7vh auto}}
+</style>
+</head>
+<body>
+<div class="boot" id="boot"><div class="bootCore"><div class="scan"></div></div><div class="bootLabel">JARVIS INITIALIZING • SECURE VISUAL BOOT</div></div>
+
+<div class="shell">
+<header class="topbar">
+  <div class="brand"><div class="orb"></div><div><div class="eyebrow">PERSONAL AI COMMAND CENTER</div><h1>JARVIS</h1></div></div>
+  <div class="topActions"><button id="settingsBtn">⚙ SETTINGS</button><button id="lockBtn">🔒 LOCK</button></div>
+</header>
+
+<section class="card gate" id="gate">
+  <div class="eyebrow">SECURITY GATE</div><h2>Welcome back</h2>
+  <div class="sub">Visual retina-style scan complete. This animation is only a visual interface; it does not perform real biometric matching.</div>
+  <div class="formrow"><input id="password" type="password" placeholder="Enter JARVIS password"><button id="unlock">UNLOCK</button></div>
+  <div class="hint" id="gateMsg"></div>
+</section>
+
+<section id="dashboard" class="dashboard hidden">
+  <div class="card cardPad">
+    <div class="cardTitle"><h2>NOTIFICATION MONITOR</h2><div class="status"><i class="dot" id="bridgeDot"></i><span id="bridgeStatus">Bridge not configured</span></div></div>
+    <div class="toolbar"><select id="filter"><option value="">All applications</option><option>WhatsApp</option><option>Telegram</option><option>Gmail</option><option>Instagram</option><option>Messages</option></select><button id="refresh">REFRESH</button><button id="clear">CLEAR</button></div>
+    <div class="notices" id="notices"></div>
+  </div>
+
+  <div class="card cardPad chat">
+    <div class="cardTitle"><h2>ASK JARVIS</h2><span class="badge">AI READY</span></div>
+    <div class="chatlog" id="chatlog"><div class="bubble"><b>JARVIS</b><br>আমি প্রস্তুত। তুমি notification, WhatsApp preview বা আজকের activity সম্পর্কে প্রশ্ন করতে পারো।</div></div>
+    <div class="chatrow"><input id="question" placeholder="যেমন: আজ WhatsApp-এ কে আমাকে মেসেজ করেছে?"><button id="send">SEND</button></div>
+  </div>
+
+  <div class="card cardPad wide">
+    <div class="cardTitle"><h2>SYSTEM OVERVIEW</h2><span class="badge">LOCAL UI</span></div>
+    <div class="stats"><div class="stat"><b id="count">0</b><span>NOTIFICATIONS</span></div><div class="stat"><b id="apps">0</b><span>APPS</span></div><div class="stat"><b id="today">0</b><span>TODAY</span></div><div class="stat"><b>ON</b><span>JARVIS CORE</span></div></div>
+  </div>
+</section>
+</div>
+
+<div class="modal hidden" id="settingsModal"><div class="box card">
+  <div class="cardTitle"><h2>JARVIS CONNECTION SETTINGS</h2><button id="closeSettings">✕</button></div>
+  <div class="field"><label>BACKEND / BRIDGE URL</label><input id="backendUrl" placeholder="https://your-server.example.com"></div>
+  <div class="field"><label>BRIDGE TOKEN</label><input id="bridgeToken" type="password" placeholder="Your bridge token"></div>
+  <div class="hint">GitHub Pages is static hosting. Real Android Notification Access and Gemini calls need a separate backend. These values are stored only in this browser. Do not publish a secret token in a public repository.</div>
+  <button id="saveSettings" style="margin-top:12px">SAVE & TEST</button>
+</div></div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+(() => {
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const KEY="jarvis_internal_state_v1";
+const state=JSON.parse(localStorage.getItem(KEY)||"{}");
+state.notifications=state.notifications||[];
+state.backendUrl=state.backendUrl||"";
+state.bridgeToken=state.bridgeToken||"";
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function toast(t){$("toast").textContent=t;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),2200)}
+function render(){
+ const f=$("filter").value.toLowerCase();
+ const data=state.notifications.filter(n=>!f||String(n.appName).toLowerCase().includes(f)||String(n.packageName).toLowerCase().includes(f));
+ $("notices").innerHTML=data.length?data.slice().reverse().map(n=>`<div class="notice"><div class="noticeTop"><span class="app">${esc(n.appName||n.packageName)}</span><span class="time">${new Date(n.timestamp).toLocaleString()}</span></div><div class="title">${esc(n.title)}</div><div class="text">${esc(n.text||"No preview text")}</div></div>`).join(""):'<div class="empty">No notification records yet.<br>Connect the Android bridge and grant Notification Access.</div>';
+ $("count").textContent=state.notifications.length;
+ $("apps").textContent=new Set(state.notifications.map(n=>n.packageName||n.appName)).size;
+ const start=new Date();start.setHours(0,0,0,0);
+ $("today").textContent=state.notifications.filter(n=>n.timestamp>=start.getTime()).length;
+}
+async function fetchNotifications(){
+ if(!state.backendUrl||!state.bridgeToken){$("bridgeStatus").textContent="Bridge not configured";$("bridgeDot").classList.remove("ok");return}
+ try{
+  const r=await fetch(state.backendUrl.replace(/\/$/,"")+"/api/bridge/notifications",{headers:{Authorization:"Bearer "+state.bridgeToken}});
+  if(!r.ok) throw Error("HTTP "+r.status);
+  const d=await r.json(); state.notifications=d.notifications||[]; save(); render();
+  $("bridgeStatus").textContent="Bridge connected";$("bridgeDot").classList.add("ok");
+ }catch(e){$("bridgeStatus").textContent="Bridge unavailable";$("bridgeDot").classList.remove("ok")}
+}
+async function ask(){
+ const q=$("question").value.trim();if(!q)return;
+ $("chatlog").insertAdjacentHTML("beforeend",`<div class="bubble"><b>YOU</b><br>${esc(q)}</div>`);$("question").value="";
+ if(state.backendUrl&&state.bridgeToken){
+  try{
+   const r=await fetch(state.backendUrl.replace(/\/$/,"")+"/api/chat",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+state.bridgeToken},body:JSON.stringify({message:q})});
+   const d=await r.json();$("chatlog").insertAdjacentHTML("beforeend",`<div class="bubble"><b>JARVIS</b><br>${esc(d.reply||d.error||"No response")}</div>`);return;
+  }catch(e){}
+ }
+ const lower=q.toLowerCase();let data=state.notifications;
+ if(lower.includes("whatsapp"))data=data.filter(n=>String(n.appName).toLowerCase().includes("whatsapp")||String(n.packageName).toLowerCase().includes("whatsapp"));
+ const todayStart=new Date();todayStart.setHours(0,0,0,0);if(lower.includes("আজ")||lower.includes("today"))data=data.filter(n=>n.timestamp>=todayStart.getTime());
+ const reply=data.length?data.slice(-20).map(n=>`${new Date(n.timestamp).toLocaleTimeString()} — ${n.appName}: ${n.title}${n.text?" — "+n.text:""}`).join("<br>"):"এই প্রশ্নের উত্তর দেওয়ার মতো stored notification নেই। Android Notification Access এবং bridge connection যাচাই করো।";
+ $("chatlog").insertAdjacentHTML("beforeend",`<div class="bubble"><b>JARVIS</b><br>${reply}</div>`);
+}
+setTimeout(()=>{$("boot").classList.add("hide")},1800);
+$("unlock").onclick=()=>{if($("password").value==="AK@111"){$("gate").classList.add("hidden");$("dashboard").classList.remove("hidden");render();fetchNotifications()}else $("gateMsg").textContent="Incorrect password."};
+$("password").onkeydown=e=>{if(e.key==="Enter")$("unlock").click()};
+$("lockBtn").onclick=()=>location.reload();
+$("filter").onchange=render;$("refresh").onclick=fetchNotifications;$("clear").onclick=()=>{state.notifications=[];save();render();toast("Notification history cleared")};
+$("send").onclick=ask;$("question").onkeydown=e=>{if(e.key==="Enter")ask()};
+$("settingsBtn").onclick=()=>{$("backendUrl").value=state.backendUrl;$("bridgeToken").value=state.bridgeToken;$("settingsModal").classList.remove("hidden")};
+$("closeSettings").onclick=()=>$("settingsModal").classList.add("hidden");
+$("saveSettings").onclick=()=>{state.backendUrl=$("backendUrl").value.trim();state.bridgeToken=$("bridgeToken").value.trim();save();$("settingsModal").classList.add("hidden");fetchNotifications();toast("Connection settings saved")};
+render();
+})();
+</script>
+</body>
+</html>
