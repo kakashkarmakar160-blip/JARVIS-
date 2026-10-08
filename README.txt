@@ -1,18 +1,21 @@
-AKASH'S AI — JARVIS INTERNAL V6
+AKASH'S AI • JARVIS INTERNAL V7
 
-This build follows the requested structure:
-- The main frontend is a single index.html.
-- All CSS is inside <style> in index.html.
-- All frontend JavaScript is inside <script> in index.html.
-- No external CSS or frontend JS file is required.
+This build is intentionally self-contained on the frontend:
+- All CSS is inside index.html <style>
+- All frontend JavaScript is inside index.html <script>
+- No external CSS/JS libraries are required.
 
-Security gate:
-- Visual front-camera preview when permission is granted.
-- 60-second visual sequence.
-- No iris scanning, biometric matching, face recognition, or recording.
-- Password: AK@111 (static demo; production authentication should be server-side).
+Reference-driven UI:
+- Holographic globe/core at the top
+- Futuristic app icons and cards
+- Longer chat area showing multiple messages
+- Surroundings radar at the bottom
+- Notification Center with today's demo notifications
+- Settings with app/notification toggles and API-key field
+- 10-second visual biometric/retina-style demo, no biometric matching
+- Password gate: AK@111
+- File Vault with local browser metadata storage
+- Memory and user-defined risky-location rules
 
-The UI is mobile-first and follows the supplied JARVIS reference layout: top header, holographic world core, left/right control cards, app dock, Ask AI, activity, status cards, and bottom navigation.
-
-Important:
-GitHub Pages can host this frontend. Android Notification Access, background location, Gemini/API secrets, and native device controls require a secure backend and/or Android companion bridge. Do not put API keys or bridge secrets in public index.html.
+IMPORTANT:
+The browser cannot directly read Android app notifications, background location, or native permissions. Those require the Android companion/bridge and/or secure backend. The API key field is only a frontend demo; production API keys must remain server-side.
