@@ -1,59 +1,26 @@
-# Akash's AI — JARVIS V4
+# Akash's AI — JARVIS V5
 
-A mobile-first, cinematic JARVIS web dashboard based on the supplied reference layout.
+Mobile-first futuristic JARVIS website + Android bridge foundation.
 
-## Included
-- Exact mobile-first dashboard structure: header, holographic world/core, left menu, right quick actions, AI dock, Ask AI box, activity, status cards and bottom navigation.
-- 60-second **visual eye-camera sequence** before the password gate.
-- The eye sequence is deliberately **NOT biometric**: it does not perform iris recognition, face recognition, identity matching, or save camera footage. It simply shows the user's live front-camera preview with a cinematic scanning overlay.
-- Server-side password authentication (`JARVIS_PASSWORD`). Default development password: `AK@111`.
-- Gemini server integration with API key kept on the server.
-- Notification bridge API + WebSocket event stream.
-- Android NotificationListenerService bridge.
-- Android location safety bridge: user-defined risky locations, radius alerts, vibration/browser notification where supported.
-- File vault, memory/notes, planner, settings, permissions and device/smart-home UI foundations.
-- ChatGPT and Gemini launcher buttons.
+## What is fixed in V5
+- Mobile HUD/glass/neon interface closely follows the supplied reference layout.
+- CSS/JS asset paths are relative so the frontend can render from GitHub Pages/project pages instead of relying on root `/css/...` paths.
+- 60-second visual eye/camera sequence. It is **camera preview only**; no iris scan, biometric matching, face recognition, or camera recording is performed.
+- Password: `AK@111`.
+- GitHub Pages/static mode can unlock with the password and use local UI/file/memory features.
+- Full Gemini AI, WebSocket notification bridge, server-side password validation and location bridge require the Node server.
+- Files are stored locally in the browser vault in the web version.
+- Location safety zones and notification UI are included in the architecture.
 
-## Run website
-```bash
-npm install
-cp .env.example .env
-npm start
-```
-Open `http://localhost:3000`.
+## Local full mode
+1. `npm install`
+2. Copy `.env.example` to `.env`
+3. Put your Gemini API key in `.env` (never put it in frontend code).
+4. `npm start`
+5. Open `http://localhost:3000`
 
-### Environment
-```env
-GEMINI_API_KEY=PASTE_YOUR_GEMINI_API_KEY_HERE
-GEMINI_MODEL=gemini-3.8-flash
-JARVIS_PASSWORD=AK@111
-BRIDGE_TOKEN=CHANGE_THIS_TO_A_LONG_RANDOM_TOKEN
-PORT=3000
-CHATGPT_URL=https://chatgpt.com/
-GEMINI_URL=https://gemini.google.com/
-```
+## GitHub Pages
+Upload the contents of `public/` to the Pages source. The UI will render in static mode. Browser-only features work, but a GitHub Pages site cannot run the Node API/WebSocket/Android bridge itself. For live Gemini and Android notifications/location, host the Node server separately and connect the companion to that backend.
 
-Never put a real API key in frontend files or commit `.env`.
-
-## Visual eye gate
-The site requests the browser camera and displays the live front-camera feed for at least 60 seconds. This is a visual/cinematic gate only. The code intentionally does not implement biometric matching.
-
-A browser cannot silently grant camera access; the user must approve the browser permission prompt. If permission is denied/unavailable, the sequence continues with a visual fallback and still requires the password.
-
-## Android companion
-The `android-bridge/` module is a starter companion. It provides:
-- Notification Access via `NotificationListenerService`.
-- Location monitoring via a foreground location service.
-- Authenticated bridge POSTs using `BRIDGE_TOKEN`.
-
-Android permission screens and background behavior must be tested on a real device. Notification Access gives the bridge notification data supplied by Android; it does not grant access to private WhatsApp/Telegram databases.
-
-## Safety locations
-Create a risky location from the website Location Center. Example rule:
-- radius: 500 m
-- warning message: "You are approaching a place you marked as risky."
-
-The Android bridge sends location updates; the server calculates distance and pushes an alert over WebSocket. The system only alerts for locations the user configured.
-
-## Production checklist
-Use HTTPS, a real authentication/session store, secure cookies, rate limiting, encrypted sensitive storage, CSRF protection where applicable, proper bridge key rotation, Android signing, Play policy review, privacy policy/Data Safety declarations, and real-device testing before release.
+## Android bridge
+`android-bridge/` contains the NotificationListenerService and location-monitor foundation. Real Android permissions must be granted by the user and tested on a physical device before production release.
