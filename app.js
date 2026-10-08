@@ -1,86 +1,33 @@
-let token = localStorage.getItem("jarvis_session") || "";
-
-const $ = id => document.getElementById(id);
-
-setTimeout(() => $("boot").classList.add("hidden"), 2200);
-
-function api(path, options = {}) {
-  options.headers = {...(options.headers || {}), "Content-Type":"application/json"};
-  if (token) options.headers.Authorization = `Bearer ${token}`;
-  return fetch(path, options);
-}
-
-function addChat(who, text) {
-  const d = document.createElement("div");
-  d.className = "msg";
-  d.innerHTML = `<b>${who}</b><div>${String(text).replace(/[<>&]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</div>`;
-  $("chatLog").appendChild(d);
-}
-
-async function login() {
-  const r = await api("/api/login",{method:"POST",body:JSON.stringify({password:$("password").value})});
-  const data = await r.json();
-  if (!r.ok) return $("loginStatus").textContent = data.error || "Login failed";
-  token = data.token;
-  localStorage.setItem("jarvis_session",token);
-  $("login").classList.add("hidden");
-  $("dashboard").classList.remove("hidden");
-  refreshAll();
-}
-
-async function refreshNotifications() {
-  const app = $("appFilter").value;
-  const r = await api("/api/bridge/notifications?app="+encodeURIComponent(app));
-  if (r.status === 401) return;
-  const data = await r.json();
-  const box = $("notifications");
-  box.innerHTML = "";
-  for (const n of [...(data.notifications||[])].reverse()) {
-    const el = document.createElement("div");
-    el.className = "notice";
-    el.innerHTML = `<b>${escapeHtml(n.appName)}</b> — ${escapeHtml(n.title)}<br>${escapeHtml(n.text)}<br><small>${new Date(n.timestamp).toLocaleString()}</small>`;
-    box.appendChild(el);
-  }
-  $("bridgeStatus").textContent = "Bridge data connected";
-  $("bridgeDot").style.background = "#63ffad";
-}
-
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-
-async function refreshAll(){ await refreshNotifications(); }
-
-$("loginBtn").onclick = login;
-$("password").onkeydown = e => { if(e.key==="Enter") login(); };
-$("refresh").onclick = refreshNotifications;
-$("appFilter").onchange = refreshNotifications;
-
-$("clear").onclick = async () => {
-  if(!confirm("Delete stored notification records?")) return;
-  await api("/api/bridge/notifications",{method:"DELETE"});
-  refreshNotifications();
-};
-
-$("send").onclick = async () => {
-  const message = $("message").value.trim();
-  if(!message) return;
-  addChat("YOU",message);
-  $("message").value="";
-  const r = await api("/api/chat",{method:"POST",body:JSON.stringify({message})});
-  const d = await r.json();
-  addChat("JARVIS", d.reply || d.error || "No response");
-};
-
-$("message").onkeydown = e => { if(e.key==="Enter") $("send").click(); };
-
-$("logout").onclick = async () => {
-  await api("/api/logout",{method:"POST"});
-  localStorage.removeItem("jarvis_session");
-  token="";
-  location.reload();
-};
-
-if(token){
-  $("login").classList.add("hidden");
-  $("dashboard").classList.remove("hidden");
-  setTimeout(refreshAll,2500);
-}
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const S={token:sessionStorage.getItem("jarvis_token")||"",mem:JSON.parse(localStorage.getItem("j_mem")||"[]"),files:JSON.parse(localStorage.getItem("j_files")||"[]"),tasks:JSON.parse(localStorage.getItem("j_tasks")||"[]"),mon:JSON.parse(localStorage.getItem("j_mon")||"[]"),alerts:JSON.parse(localStorage.getItem("j_alerts")||"[]")};
+const apps=["WhatsApp","Telegram","Gmail","Instagram","Facebook","YouTube","Chrome","Messages","Other"];
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v)), esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function page(p){$$(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));$$(".side nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===p));$("#title").textContent=p.replace(/^\w/,x=>x.toUpperCase()).replaceAll("-"," ");}
+function stats(){$("#memoryCount").textContent=S.mem.length;$("#monitorCount").textContent=S.mon.length;$("#alertCount").textContent=S.alerts.length}
+function alertMsg(t){S.alerts.unshift({t,time:new Date().toLocaleString()});S.alerts=S.alerts.slice(0,20);save("j_alerts",S.alerts);renderAlerts();stats()}
+function renderAlerts(){$("#alerts").innerHTML=S.alerts.length?S.alerts.map(a=>`<div class="item">${esc(a.t)}<small>${esc(a.time)}</small></div>`).join(""):`<div class="empty">No alerts yet.</div>`}
+function renderApps(){$("#apps").innerHTML=apps.map(a=>`<label class="appRow"><span><b>${a}</b><small>${S.mon.includes(a)?"Monitoring enabled":"Not monitored"}</small></span><input class="appToggle" data-app="${a}" type="checkbox" ${S.mon.includes(a)?"checked":""}></label>`).join("");$$(".appToggle").forEach(x=>x.onchange=()=>{const a=x.dataset.app;if(x.checked&&!S.mon.includes(a))S.mon.push(a);if(!x.checked)S.mon=S.mon.filter(v=>v!==a);save("j_mon",S.mon);stats();renderApps();alertMsg(`${a} monitoring ${x.checked?"enabled":"disabled"}.`)})}
+function renderMem(){$("#memories").innerHTML=S.mem.length?S.mem.map((m,i)=>`<div class="item">${esc(m)}<button class="secondary" data-del-m="${i}">Delete</button></div>`).join(""):`<div class="empty">No memories saved.</div>`;$$("[data-del-m]").forEach(b=>b.onclick=()=>{S.mem.splice(+b.dataset.delM,1);save("j_mem",S.mem);renderMem();stats()})}
+function renderFiles(){$("#fileList").innerHTML=S.files.length?S.files.map((f,i)=>`<div class="item">▣ ${esc(f.name)}<small>${esc(f.size)} • ${esc(f.type||"unknown")}</small><button class="secondary" data-del-f="${i}">Remove</button></div>`).join(""):`<div class="empty">No files selected.</div>`;$$("[data-del-f]").forEach(b=>b.onclick=()=>{S.files.splice(+b.dataset.delF,1);save("j_files",S.files);renderFiles()})}
+function renderTasks(){$("#tasks").innerHTML=S.tasks.length?S.tasks.map((t,i)=>`<label class="item"><span><input type="checkbox" data-task="${i}" ${t.done?"checked":""}> ${esc(t.text)}<small>${esc(t.time)}</small></span><button class="secondary" data-del-t="${i}">Delete</button></label>`).join(""):`<div class="empty">No tasks yet.</div>`;$$("[data-task]").forEach(x=>x.onchange=()=>{S.tasks[+x.dataset.task].done=x.checked;save("j_tasks",S.tasks)});$$("[data-del-t]").forEach(b=>b.onclick=()=>{S.tasks.splice(+b.dataset.delT,1);save("j_tasks",S.tasks);renderTasks()})}
+function addMsg(role,text){const d=document.createElement("div");d.className="msg "+role;d.innerHTML=`<span>${role==="user"?"YOU":"JARVIS"}</span>${esc(text)}`;$("#messages").append(d);$("#messages").scrollTop=999999}
+async function chat(text){addMsg("user",text);addMsg("jarvis","Thinking...");const thinking=$("#messages").lastElementChild;try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+S.token},body:JSON.stringify({message:text})});const d=await r.json();thinking.remove();if(!r.ok)throw Error(d.error||"JARVIS backend error.");addMsg("jarvis",d.reply);if($("#voiceToggle").dataset.on==="1")speak(d.reply)}catch(e){thinking.remove();addMsg("jarvis","⚠️ JARVIS সমস্যা: "+e.message)}}
+function speak(t){if(!speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang=/[\u0980-\u09FF]/.test(t)?"bn-IN":"en-US";speechSynthesis.speak(u)}
+async function unlock(p){const r=await fetch("/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:p})});const d=await r.json();if(!r.ok)throw Error(d.error);S.token=d.token;sessionStorage.setItem("jarvis_token",S.token);$("#bootScreen").classList.add("hidden");$("#lockScreen").classList.add("hidden");$("#app").classList.remove("hidden");init()}
+function init(){renderApps();renderAlerts();renderMem();renderFiles();renderTasks();stats();fetch("/api/health").then(r=>r.json()).then(d=>{$("#modelStatus").textContent=d.model;$("#settingsModel").textContent=d.model})}
+$$(".side nav button").forEach(b=>b.onclick=()=>page(b.dataset.page));$$("[data-open-chat]").forEach(b=>b.onclick=()=>page("chat"));$$("[data-cmd]").forEach(b=>b.onclick=()=>{page("chat");chat(b.dataset.cmd)});
+$("#chatForm").onsubmit=e=>{e.preventDefault();const t=$("#input").value.trim();if(t){$("#input").value="";chat(t)}};
+$("#mic").onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alertMsg("Voice recognition is not supported in this browser.");const r=new R();r.lang="bn-IN";r.onresult=e=>{$("#input").value=e.results[0][0].transcript;$("#chatForm").requestSubmit()};r.start()};
+$("#voiceToggle").onclick=()=>{$("#voiceToggle").dataset.on=$("#voiceToggle").dataset.on==="1"?"0":"1";$("#voiceToggle").textContent=$("#voiceToggle").dataset.on==="1"?"🔊":"🎙"};
+$("#lockBtn").onclick=()=>{sessionStorage.removeItem("jarvis_token");location.reload()};
+$("#loginForm").onsubmit=async e=>{e.preventDefault();$("#loginError").textContent="";try{await unlock($("#passwordInput").value)}catch(x){$("#loginError").textContent=x.message}};
+$("#browserNotif").onclick=async()=>{if(!("Notification"in window))return alertMsg("Browser notifications are not supported.");const p=await Notification.requestPermission();$("#notifStatus").textContent=p;if(p==="granted")new Notification("JARVIS",{body:"Browser alert permission enabled."})};
+$("#files").onchange=e=>{[...e.target.files].forEach(f=>S.files.push({name:f.name,size:(f.size/1024).toFixed(1)+" KB",type:f.type}));save("j_files",S.files);renderFiles()};
+$("#addMemory").onclick=()=>{const x=prompt("What should JARVIS remember?");if(x?.trim()){S.mem.unshift(x.trim());save("j_mem",S.mem);renderMem();stats()}};
+$("#addTask").onclick=()=>{const x=prompt("Task name:");if(x?.trim()){S.tasks.push({text:x.trim(),done:false,time:new Date().toLocaleString()});save("j_tasks",S.tasks);renderTasks()}};
+$("#contacts").onclick=async()=>{if(!navigator.contacts?.select)return alertMsg("Contact Picker is not supported by this browser.");try{const c=await navigator.contacts.select(["name","tel"],{multiple:true});$("#contactList").innerHTML=c.map(x=>`<div class="item">${esc((x.name||[])[0]||"Unknown")}<small>${esc((x.tel||[])[0]||"No number")}</small></div>`).join("")}catch{}};
+const permissions=[["🎤","Microphone","Voice input"],["🔔","Notifications","Browser alerts"],["📍","Location","Location features"],["👤","Contacts","Contact Picker"],["📁","Files","User-selected files"],["📷","Camera","Future visual features"],["◌","Nearby devices","Future hardware"]];
+$("#permissions").innerHTML=permissions.map(p=>`<div class="rows"><div>${p[0]} ${p[1]}<small>${p[2]}</small><b>Browser controlled</b></div></div>`).join("");
+setTimeout(()=>{$("#bootStatus").textContent="VISUAL SCAN COMPLETE • NO BIOMETRIC MATCHING";$("#continueBoot").hidden=false},2600);
+$("#continueBoot").onclick=()=>{$("#bootScreen").classList.add("hidden");$("#lockScreen").classList.remove("hidden");$("#passwordInput").focus()};
+if(S.token)fetch("/api/health").then(()=>init());
