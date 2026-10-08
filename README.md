@@ -1,26 +1,32 @@
-# Akash's AI — JARVIS V5
+# Akash AI JARVIS — Internal V8
 
-Mobile-first futuristic JARVIS website + Android bridge foundation.
+This build preserves the existing inline SVG icon system from Internal V7 and upgrades functionality without replacing the icons.
 
-## What is fixed in V5
-- Mobile HUD/glass/neon interface closely follows the supplied reference layout.
-- CSS/JS asset paths are relative so the frontend can render from GitHub Pages/project pages instead of relying on root `/css/...` paths.
-- 60-second visual eye/camera sequence. It is **camera preview only**; no iris scan, biometric matching, face recognition, or camera recording is performed.
-- Password: `AK@111`.
-- GitHub Pages/static mode can unlock with the password and use local UI/file/memory features.
-- Full Gemini AI, WebSocket notification bridge, server-side password validation and location bridge require the Node server.
-- Files are stored locally in the browser vault in the web version.
-- Location safety zones and notification UI are included in the architecture.
+## Included
+- `index.html`: all CSS + JavaScript internal to one file
+- `server.js`: minimal static Express server
+- `package.json`: start script
+- `.env.example`: safe configuration template
 
-## Local full mode
-1. `npm install`
-2. Copy `.env.example` to `.env`
-3. Put your Gemini API key in `.env` (never put it in frontend code).
-4. `npm start`
-5. Open `http://localhost:3000`
+## Features
+- 10-second visual camera scan demo, then password `AK@111`
+- Startup-audio hook is retained through browser interaction; add your own audio file if desired
+- ChatGPT button opens the real `https://chatgpt.com/`
+- Gemini button opens the real `https://gemini.google.com/`
+- Main JARVIS chat can call Gemini `gemini-3.8-flash` after a user enters an API key in Settings
+- Functional local calendar notes/reminders
+- Browser live geolocation
+- Safe fake cyber simulation with SL / DIT / npm start / npm commands
+- Existing SVG icons are preserved; no icon library replacement
 
-## GitHub Pages
-Upload the contents of `public/` to the Pages source. The UI will render in static mode. Browser-only features work, but a GitHub Pages site cannot run the Node API/WebSocket/Android bridge itself. For live Gemini and Android notifications/location, host the Node server separately and connect the companion to that backend.
+## Run
+```bash
+npm install
+npm start
+```
+Then open `http://localhost:3000`.
 
-## Android bridge
-`android-bridge/` contains the NotificationListenerService and location-monitor foundation. Real Android permissions must be granted by the user and tested on a physical device before production release.
+## Important limits
+The cyber terminal is visual simulation only and performs no real scanning, exploitation, or unauthorized access.
+Browser-only location and notifications have platform limitations. Reliable background Android notification access/location requires a native Android companion.
+A Gemini API key entered in a static frontend is visible to that browser; production deployments should proxy AI calls through a secure server.

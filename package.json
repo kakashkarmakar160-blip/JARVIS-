@@ -1,17 +1,7 @@
 {
-  "name": "akass-ai-jarvis",
-  "version": "4.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "node server/server.js",
-    "dev": "node --watch server/server.js"
-  },
-  "dependencies": {
-    "@google/genai": "latest",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^5.1.0",
-    "ws": "^8.18.3"
-  }
+  "name":"akash-ai-jarvis",
+  "version":"1.0.0",
+  "private":true,
+  "scripts":{"start":"node server.js"},
+  "dependencies":{"express":"^5.1.0"}
 }
