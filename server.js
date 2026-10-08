@@ -1,249 +1,163 @@
 import express from "express";
-import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import crypto from "crypto";
 import path from "path";
 import { fileURLToPath } from "url";
+import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
 const app = express();
-
-const PORT = Number(process.env.PORT || 3000);
-const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
-
-const OWNER_NAME = "Akash Karmakar";
+app.use(express.json({ limit: "256kb" }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.join(__dirname, "..");
+const publicDir = path.join(__dirname, "..", "public");
 
-const client = process.env.GEMINI_API_KEY
-  ? new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY
-    })
+const PORT = Number(process.env.PORT || 3000);
+const PASSWORD = process.env.JARVIS_PASSWORD || "AK@111";
+const BRIDGE_TOKEN = process.env.BRIDGE_TOKEN || "CHANGE_ME";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+
+const sessions = new Map();
+const notifications = [];
+const MAX_NOTIFICATIONS = 3000;
+
+const ai = process.env.GEMINI_API_KEY
+  ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
   : null;
 
-app.use(express.json({ limit: "1mb" }));
-app.use(express.static(projectRoot));
-
-
-// ==========================================
-// HEALTH CHECK
-// ==========================================
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    aiConfigured: Boolean(process.env.GEMINI_API_KEY),
-    provider: "Gemini",
-    model: MODEL,
-    owner: OWNER_NAME,
-    serverTime: new Date().toISOString()
-  });
-});
-
-
-// ==========================================
-// ERROR HANDLER
-// ==========================================
-
-function getFriendlyGeminiError(error) {
-  const status = Number(error?.status || error?.code || 500);
-  const rawMessage = String(error?.message || "");
-
-  // 429 = Quota exceeded
-  if (status === 429 || rawMessage.includes("RESOURCE_EXHAUSTED")) {
-    return {
-      status: 429,
-      code: "QUOTA_EXCEEDED",
-      message:
-        "Gemini API-এর বর্তমান Free Tier quota শেষ হয়ে গেছে। " +
-        "এখন নতুন request পাঠানো বন্ধ রাখা ভালো।" +
-        "Quota reset হলে আবার JARVIS ব্যবহার করা যাবে।  I AM TOK ONLEY A.K"
-    };
-  }
-
-  // 503 = Temporary server overload
-  if (
-    status === 503 ||
-    rawMessage.includes("UNAVAILABLE") ||
-    rawMessage.includes("high demand")
-  ) {
-    return {
-      status: 503,
-      code: "MODEL_UNAVAILABLE",
-      message:
-        "Gemini model বর্তমানে high demand-এর কারণে সাময়িকভাবে unavailable। " +
-        "কিছুক্ষণ পরে আবার চেষ্টা করুন।"
-    };
-  }
-
-  // 401 / 403 = API key/authentication
-  if (status === 401 || status === 403) {
-    return {
-      status,
-      code: "API_AUTH_ERROR",
-      message:
-        "Gemini API authentication সমস্যা হয়েছে। " +
-        "GEMINI_API_KEY সঠিকভাবে configured আছে কিনা পরীক্ষা করুন।"
-    };
-  }
-
-  // 400 = Bad request
-  if (status === 400) {
-    return {
-      status: 400,
-      code: "BAD_REQUEST",
-      message:
-        "JARVIS-এর request গ্রহণ করতে Gemini API সমস্যা পেয়েছে। " +
-        "আপনার command আবার চেষ্টা করুন।"
-    };
-  }
-
-  // Other errors
-  return {
-    status: status >= 400 && status < 600 ? status : 500,
-    code: "GEMINI_ERROR",
-    message:
-      "JARVIS-এর Gemini service-এ একটি সমস্যা হয়েছে: " +
-      (rawMessage || "Unknown error")
-  };
+function newToken() {
+  return crypto.randomBytes(32).toString("hex");
 }
 
+function auth(req, res, next) {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+  if (!sessions.has(token)) return res.status(401).json({ error: "Unauthorized" });
+  req.sessionToken = token;
+  next();
+}
 
-// ==========================================
-// CHAT
-// ==========================================
+function bridgeAuth(req, res, next) {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
+  if (!BRIDGE_TOKEN || BRIDGE_TOKEN === "CHANGE_ME" || token !== BRIDGE_TOKEN) {
+    return res.status(401).json({ error: "Invalid bridge token" });
+  }
+  next();
+}
 
-app.post("/api/chat", async (req, res) => {
-  try {
-    const message =
-      typeof req.body?.message === "string"
-        ? req.body.message.trim()
-        : "";
+app.post("/api/login", (req, res) => {
+  if (req.body?.password !== PASSWORD) {
+    return res.status(401).json({ error: "Wrong password" });
+  }
+  const token = newToken();
+  sessions.set(token, { createdAt: Date.now() });
+  res.json({ ok: true, token });
+});
 
-    // Empty message
-    if (!message) {
-      return res.status(400).json({
-        ok: false,
-        errorCode: "EMPTY_MESSAGE",
-        error:
-          "কোনো command পাওয়া যায়নি। দয়া করে JARVIS-কে একটি প্রশ্ন বা command দিন।"
-      });
-    }
+app.post("/api/logout", auth, (req, res) => {
+  sessions.delete(req.sessionToken);
+  res.json({ ok: true });
+});
 
-    // API key missing
-    if (!client) {
-      return res.status(503).json({
-        ok: false,
-        errorCode: "API_NOT_CONFIGURED",
-        error:
-          "Gemini API configure করা হয়নি। .env ফাইলে GEMINI_API_KEY যোগ করে JARVIS server restart করুন।"
-      });
-    }
+app.get("/api/bridge/health", bridgeAuth, (req, res) => {
+  res.json({ ok: true, service: "JARVIS Notification Bridge", time: new Date().toISOString() });
+});
 
+app.post("/api/bridge/notifications", bridgeAuth, (req, res) => {
+  const item = req.body;
+  if (!item || !item.packageName) {
+    return res.status(400).json({ error: "packageName is required" });
+  }
 
-    // ======================================
-    // JARVIS SYSTEM INSTRUCTION
-    // ======================================
+  const normalized = {
+    id: item.id || crypto.randomUUID(),
+    packageName: String(item.packageName).slice(0, 200),
+    appName: String(item.appName || item.packageName).slice(0, 200),
+    title: String(item.title || "").slice(0, 1000),
+    text: String(item.text || "").slice(0, 5000),
+    timestamp: Number(item.timestamp || Date.now()),
+    category: String(item.category || "").slice(0, 100),
+    isOngoing: Boolean(item.isOngoing),
+    source: "android-notification-access"
+  };
 
-    const systemInstruction = `
-You are JARVIS, a personal AI operating assistant.
+  notifications.push(normalized);
+  while (notifications.length > MAX_NOTIFICATIONS) notifications.shift();
 
-OWNER:
-Your owner/user is ${OWNER_NAME}.
+  res.json({ ok: true, id: normalized.id, stored: notifications.length });
+});
 
-IDENTITY RULE:
-- You are JARVIS.
-- You are configured to assist only ${OWNER_NAME}.
-- When asked "Who are you?", explain that you are JARVIS, the personal AI assistant configured for ${OWNER_NAME}.
-- Do not invent another owner name.
-- Do not claim that you have verified the user's real-world identity unless the application actually provides authentication information.
+app.get("/api/bridge/notifications", auth, (req, res) => {
+  const appFilter = String(req.query.app || "").trim().toLowerCase();
+  const since = Number(req.query.since || 0);
 
-LANGUAGE:
-- The user may communicate in Bengali or English.
-- Reply in the same language as the user whenever appropriate.
+  let data = notifications.filter(n => n.timestamp >= since);
+  if (appFilter) {
+    data = data.filter(n =>
+      n.appName.toLowerCase().includes(appFilter) ||
+      n.packageName.toLowerCase().includes(appFilter)
+    );
+  }
 
-PERSONALITY:
-- Professional
-- Helpful
-- Calm
-- Futuristic
-- Clear
-- Respectful
+  res.json({ ok: true, notifications: data.slice(-500) });
+});
 
-ERROR TRANSPARENCY:
-- Never hide an actual application or service problem.
-- If the application provides an error message, explain the problem clearly.
-- Never pretend that an unavailable service worked successfully.
+app.delete("/api/bridge/notifications", auth, (req, res) => {
+  notifications.length = 0;
+  res.json({ ok: true });
+});
 
-CAPABILITY RULE:
-Never claim that you accessed a phone, file, notification, location, camera, microphone, contact, calendar, another application, or another device unless the application actually provided that information to you.
+app.post("/api/chat", auth, async (req, res) => {
+  if (!ai) return res.status(503).json({ error: "Gemini API key is not configured on the server." });
 
-CURRENT CAPABILITY:
-At this stage, you are the AI conversation layer.
-Local browser features such as tasks, memories, files, notifications, device information and permissions are not automatically available to you unless the website explicitly sends that information.
+  const message = String(req.body?.message || "").trim();
+  if (!message) return res.status(400).json({ error: "Message is required." });
 
-SECURITY:
-- Never reveal or invent API keys.
-- Never ask the user to send their API key in chat.
-- Never claim that a security or authentication check was completed unless the application actually performed it.
+  const since = Date.now() - 24 * 60 * 60 * 1000;
+  const recent = notifications.filter(n => n.timestamp >= since).slice(-200);
+
+  const notificationContext = recent.length
+    ? recent.map(n => `[${new Date(n.timestamp).toLocaleString()}] ${n.appName} | ${n.title} | ${n.text}`).join("\n")
+    : "(No notification records from the last 24 hours.)";
+
+  const systemInstruction = `
+You are JARVIS, a personal AI assistant.
+You may use only the notification records supplied in the context below.
+Never claim to have read WhatsApp/Telegram/private app databases.
+If the notification data does not contain the requested information, say that clearly.
+Do not invent message senders, message text, dates, or events.
+When asked about “today”, use the timestamps in the supplied records and explain if only notification previews are available.
+Answer in the user's language when possible.
+
+RECENT ANDROID NOTIFICATION RECORDS:
+${notificationContext}
 `;
 
-    // ======================================
-    // GEMINI REQUEST
-    // ======================================
-
-    const response = await client.models.generateContent({
+  try {
+    const result = await ai.models.generateContent({
       model: MODEL,
-      contents: message,
-      config: {
-        systemInstruction
-      }
+      contents: [{ role: "user", parts: [{ text: message }] }],
+      config: { systemInstruction }
     });
 
-    const reply =
-      response?.text ||
-      "আমি আপনার request পেয়েছি, কিন্তু Gemini কোনো text response ফেরত দেয়নি।";
-
-    return res.json({
-      ok: true,
-      reply,
-      owner: OWNER_NAME,
-      provider: "Gemini",
-      model: MODEL
-    });
-
-  } catch (error) {
-    console.error("JARVIS Gemini Error:", error);
-
-    const friendlyError = getFriendlyGeminiError(error);
-
-    return res.status(friendlyError.status).json({
-      ok: false,
-      errorCode: friendlyError.code,
-      error: friendlyError.message,
-
-      // Debug information terminal-এ থাকবে,
-      // browser/user-এর কাছে raw Gemini error দেখানো হবে না।
-      provider: "Gemini",
-      model: MODEL
+    res.json({ ok: true, reply: result.text || "I could not generate a response." });
+  } catch (err) {
+    console.error(err);
+    const status = Number(err?.status || 500);
+    res.status(status >= 400 && status < 600 ? status : 500).json({
+      error: "Gemini request failed",
+      details: String(err?.message || err).slice(0, 500)
     });
   }
 });
 
+app.get("*", (req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
 
-// ==========================================
-// SERVER
-// ==========================================
-
-app.listen(PORT, () => {
-  console.log("======================================");
-  console.log("        JARVIS PERSONAL AI");
-  console.log("======================================");
-  console.log(`Server: http://localhost:${PORT}`);
-  console.log(`Gemini configured: ${Boolean(process.env.GEMINI_API_KEY)}`);
-  console.log(`Gemini model: ${MODEL}`);
-  console.log(`Owner: ${OWNER_NAME}`);
-  console.log("======================================");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`JARVIS Web: http://localhost:${PORT}`);
 });
