@@ -23,3 +23,7 @@ Then open `http://localhost:3000`. For best browser storage and media-permission
 - `.env` contains a placeholder, not an API key. Add your own key locally if needed; never share it.
 - Cyber terminal commands are a visual simulation/local database feature only; they do not perform real network scanning or unauthorized access.
 - Background alarms/location alerts and device-wide Android notifications may require an Android companion because browser background execution is limited.
+
+
+## V14 hotfix: A button
+The bottom A button now explicitly replaces the older click handler and opens SIM NUMBER VERIFICATION. After extracting this ZIP, redeploy the updated site files to your hosting (for GitHub Pages, commit/push the updated index.html and assets); downloading the ZIP alone does not update an already-published website.

@@ -326,7 +326,7 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
  window.jarvisGetSimRecords=getRecords;window.jarvisShowSimProfile=showProfile;
  function openSim(){modalOpen('JARVIS • SIM ACCESS',verifyView());setTimeout(()=>$('v12VerifyNumber')?.focus(),80)}
  // The existing large A/core button now opens the SIM verification screen.
- $('coreBtn')?.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openSim()},true);
+ if($('coreBtn')){ $('coreBtn').onclick = function(e){ e.preventDefault(); openSim(); }; }
  // Settings manager links are added to the existing Settings UI without changing its SVG icon set.
  const content=$('modalContent');if(content){new MutationObserver(()=>{if(($('modalTitle')?.textContent||'').toLowerCase().includes('settings')&&!$('v12SettingsLinks')){const box=document.createElement('div');box.id='v12SettingsLinks';box.className='v12-section';box.innerHTML='<h3>SIM & LOCATION MEDIA DATABASE</h3><div class="v12-actions"><button id="v12OpenSimDB">SIM DATABASE MANAGER</button><button id="v12OpenVideoManager">LOCATION VIDEO MANAGER</button></div>';content.appendChild(box)}}).observe(content,{childList:true,subtree:true})}
  document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
@@ -354,6 +354,18 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
  document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target?.id==='v12VerifyNumber'){e.preventDefault();$('v12Verify')?.click()}if(e.key==='Escape'&&$('v13ProfileScreen'))$('v13ProfileScreen').remove()},true);
  document.addEventListener('change',e=>{if(e.target?.id==='v13GalleryPick'&&e.target.files?.[0]){const u=URL.createObjectURL(e.target.files[0]);$('v13GalleryPreview').innerHTML=`<img src="${u}" style="width:100%;border-radius:12px">`}},true);
  injectDashboardLocation();
+ // V15 FIX: capture the central A-button click before any legacy handler can show only a toast.
+ // This ensures the SIM verification modal opens on mobile browsers too.
+ const centralA = document.getElementById('coreBtn');
+ if (centralA && !centralA.dataset.simVerifyCaptureBound) {
+   centralA.dataset.simVerifyCaptureBound = '1';
+   centralA.addEventListener('click', function(ev) {
+     ev.preventDefault();
+     ev.stopPropagation();
+     ev.stopImmediatePropagation();
+     openSim();
+   }, true);
+ }
 })();
 </script>
 
