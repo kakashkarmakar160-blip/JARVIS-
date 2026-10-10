@@ -1,0 +1,12 @@
+JARVIS EARTH VIDEO FIX (V21)
+
+The globe video is loaded from the relative file path: ./core-video.mp4
+IMPORTANT: if you publish this website on GitHub Pages, upload BOTH index.html and core-video.mp4 into the same published folder (JARVIS--main root, or the repository root depending on your Pages setup). Uploading only index.html will leave the globe video missing.
+
+After uploading:
+1. Wait for GitHub Pages to finish deploying.
+2. Open the website in Chrome.
+3. Refresh the page; if the old version remains, clear the site's cached files or open it in an Incognito tab.
+4. Tap the page once if autoplay is blocked by the browser. The video is muted and loops automatically.
+
+The ZIP includes core-video.mp4. Keep the file next to index.html; do not rename either file.

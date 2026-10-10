@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#020812">
-<title>Akash's AI • JARVIS V18</title>
+<title>Akash's AI • JARVIS V13</title>
 <style>
 :root{--bg:#020711;--panel:rgba(5,18,38,.78);--panel2:rgba(8,29,55,.72);--line:rgba(55,190,255,.38);--cyan:#58e9ff;--blue:#208cff;--violet:#9d78ff;--green:#39ffb0;--red:#ff5579;--text:#effcff;--muted:#8eabbc;--gold:#ffd86b;--shadow:0 16px 55px rgba(0,0,0,.52),inset 0 0 35px rgba(55,210,255,.025)}
 *{box-sizing:border-box}html{background:#01050a}body{margin:0;min-height:100vh;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at 50% 25%,rgba(0,142,255,.14),transparent 28%),radial-gradient(circle at 50% 78%,rgba(0,89,255,.08),transparent 32%),linear-gradient(150deg,#01040a,#061426 50%,#01050b);overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(rgba(80,210,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(80,210,255,.035) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(#000,transparent 92%)}button,input,select,textarea{font:inherit}button{border:1px solid var(--line);color:var(--text);background:linear-gradient(180deg,rgba(17,55,86,.72),rgba(3,14,27,.86));border-radius:15px;cursor:pointer;transition:.18s;box-shadow:inset 0 0 18px rgba(75,215,255,.035)}button:hover{border-color:rgba(88,233,255,.9);box-shadow:0 0 24px rgba(30,185,255,.2),inset 0 0 22px rgba(75,215,255,.05);transform:translateY(-1px)}button:active{transform:scale(.98)}input,select,textarea{width:100%;background:rgba(0,8,18,.72);color:var(--text);border:1px solid rgba(80,205,255,.3);border-radius:12px;padding:11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 18px rgba(88,233,255,.12)}svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.hidden{display:none!important}.panel{border:1px solid var(--line);background:linear-gradient(145deg,rgba(7,29,51,.76),rgba(2,10,20,.76));backdrop-filter:blur(17px);box-shadow:var(--shadow);border-radius:20px}.eyebrow{font-size:9px;letter-spacing:.18em;color:#8feeff}.muted{color:var(--muted)}
@@ -68,6 +68,50 @@
 @media(min-width:760px){#v16SimLauncher{bottom:24px;right:24px}}
 @media(max-height:520px){#v16SimLauncher{bottom:72px}}
 </style>
+
+<style id="jarvis-v19-layout-fixes">
+/* V19: central saved video and edge-to-edge phone panels */
+.corePanel{isolation:isolate}
+.jarvisCoreVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.62;background:#020914}
+.coreVideoShade{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(1,8,20,.12),rgba(1,9,22,.40));pointer-events:none}
+.coreState,.corePanel .globe,.corePanel .coreLabel{z-index:2}
+/* V20: play the saved Earth/core video inside the central holographic globe */
+.corePanel>.jarvisCoreVideo{opacity:.18}
+.corePanel .globe{z-index:2}
+.corePanel .earth{background:transparent!important;box-shadow:0 0 35px rgba(45,215,255,.55),inset 0 0 12px rgba(0,0,0,.35);border:1px solid rgba(115,239,255,.9)}
+.corePanel .earth:before,.corePanel .earth:after{display:none!important}
+.coreEarthVideo{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;border-radius:50%;opacity:1;filter:saturate(1.15) contrast(1.08);box-shadow:inset 0 0 22px rgba(0,0,0,.4)}
+.corePanel .earth:after{content:none!important}
+
+/* V21 playback fix: keep the actual video above all globe layers */
+.corePanel .earth{isolation:isolate;position:absolute;overflow:hidden;z-index:8;transform:translateZ(0);-webkit-transform:translateZ(0)}
+.corePanel .coreEarthVideo{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-width:100%;min-height:100%;object-fit:cover!important;display:block!important;visibility:visible!important;opacity:1!important;z-index:20!important;border:0!important;background:#03182b!important;pointer-events:none}
+.corePanel .earth:before,.corePanel .earth:after{z-index:0!important;display:none!important;content:none!important}
+.corePanel .earth video::-webkit-media-controls{display:none!important}
+
+.modal.jarvisFullScreen{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100vh!important;padding:0!important;margin:0!important;display:block!important;overflow:hidden!important;border-radius:0!important;background:rgba(0,3,10,.97)!important;backdrop-filter:blur(12px)}
+.modal.jarvisFullScreen .modalBox{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;min-height:100%!important;margin:0!important;padding:12px 10px calc(12px + env(safe-area-inset-bottom))!important;overflow-y:auto!important;overflow-x:hidden!important;border-radius:0!important;border:0!important;box-shadow:none!important}
+.modal.jarvisFullScreen .modalHead{position:sticky;top:0;z-index:20;padding:6px 0 10px;background:rgba(2,9,20,.96);border-bottom:1px solid rgba(88,233,255,.18)}
+.modal.jarvisFullScreen .close{display:none!important}
+.modal.jarvisFullScreen .cyberUI{width:100%!important;min-height:calc(100dvh - 54px)!important;height:auto!important;margin:0!important;border-radius:0!important;box-sizing:border-box}
+.modal.jarvisFullScreen .cyberBody{grid-template-columns:minmax(0,1.25fr) minmax(0,.85fr)!important}
+.modal.jarvisFullScreen .cyberHeader img{width:100%;height:auto;display:block}
+.modal.jarvisFullScreen .cyberLeft,.modal.jarvisFullScreen .cyberRightImage{min-width:0}
+.modal.jarvisFullScreen .cyberRightImage img{width:100%;height:auto;object-fit:contain}
+.modal.jarvisFullScreen .cyberDisclaimer{padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+@media(max-width:620px){
+ .corePanel{min-height:300px!important}
+ .jarvisCoreVideo{object-position:center}
+ .modal.jarvisFullScreen .modalBox{padding:8px 7px calc(10px + env(safe-area-inset-bottom))!important}
+ .modal.jarvisFullScreen .modalHead h2{font-size:14px}
+ .modal.jarvisFullScreen .cyberBody{grid-template-columns:minmax(0,1fr)!important;gap:8px!important}
+ .modal.jarvisFullScreen .cyberRightImage{display:block!important}
+ .modal.jarvisFullScreen .cyberRightImage img{max-height:38vh;object-fit:contain}
+ .modal.jarvisFullScreen .cyberCodeBox textarea{min-height:110px!important}
+ .modal.jarvisFullScreen .cyberOutputBox{min-height:180px!important}
+}
+</style>
+
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -94,10 +138,10 @@
 </defs></svg>
 
 <section id="gate"><div class="gate panel">
-  <div class="gateHead"><div class="logoOrb">A</div><div><div class="eyebrow">AKASH'S AI • J.A.R.V.I.S.</div><h1 style="font-size:18px;margin:2px 0">EYE SCAN INITIALIZATION</h1></div></div>
-  <div class="camera"><video id="preview" autoplay muted playsinline></video><div id="camFallback" class="camFallback">CAMERA ACCESS REQUIRED<br><small>Allow camera permission to continue</small></div><div class="scanLine"></div><div class="corners"></div><div class="eyeRead"><span>LEFT EYE / LIVE VIEW</span><span>RIGHT EYE / LIVE VIEW</span></div></div>
-  <div class="gateMeta"><span id="scanState">REQUESTING CAMERA PERMISSION</span><b id="scanTimer">10 SEC</b></div><div class="progress"><i id="scanProgress"></i></div>
-  <p class="gateNote" id="gateNote">ক্যামেরার অনুমতি দিন। লাইভ ক্যামেরা প্রিভিউ চালু হলে ১০ সেকেন্ডের স্ক্যান সিকোয়েন্স শুরু হবে, তারপর পাসওয়ার্ড স্ক্রিন খুলবে। এটি ক্যামেরা প্রিভিউ; চোখের বায়োমেট্রিক পরিচয় যাচাই করে না।</p><div id="cameraHelp" class="hidden"><p class="gateNote">এই পেজটি যদি content:// বা ফাইল ভিউয়ার থেকে খোলা হয়, ক্যামেরা অনুমতি নাও আসতে পারে। HTTPS ঠিকানা (যেমন GitHub Pages) দিয়ে খুলে আবার চেষ্টা করুন।</p><button id="retryCamera" type="button">RETRY CAMERA ACCESS</button></div>
+  <div class="gateHead"><div class="logoOrb">A</div><div><div class="eyebrow">AKASH'S AI • J.A.R.V.I.S.</div><h1 style="font-size:18px;margin:2px 0">BIOMETRIC VISUAL INITIALIZATION</h1></div></div>
+  <div class="camera"><video id="preview" autoplay muted playsinline></video><div id="camFallback" class="camFallback">CAMERA PREVIEW<br><small>Visual demo only</small></div><div class="scanLine"></div><div class="corners"></div><div class="eyeRead"><span>LEFT EYE / LIVE VIEW</span><span>RIGHT EYE / LIVE VIEW</span></div></div>
+  <div class="gateMeta"><span id="scanState">REQUESTING CAMERA • VISUAL DEMO</span><b id="scanTimer">10 SEC</b></div><div class="progress"><i id="scanProgress"></i></div>
+  <p class="gateNote">এটি শুধুমাত্র একটি visual/biometric-style demo। কোনো iris recognition, retina matching, face identification বা camera recording করা হয় না। ১০ সেকেন্ড পরে password screen খুলবে।</p>
   <div id="passwordBox" class="password hidden"><div class="eyebrow">JARVIS ACCESS</div><div class="passrow"><input id="password" type="password" placeholder="Enter system password"><button id="unlock">UNLOCK SYSTEM</button></div><div id="loginError" class="error"></div></div>
 </div></section>
 
@@ -105,7 +149,7 @@
 <header class="top"><div class="brand"><div class="brandOrb">A</div><div><div class="brandName">Akash's AI <span style="color:var(--green)">•</span></div><div class="tagline">Your Mind • My Priority</div></div></div><div class="topRight"><div class="weather"><b>☀️ 32°</b><small>Kolkata</small></div><div class="clock"><b id="clock">--:--</b><small id="date">--</small></div><button class="roundBtn" data-open="settings"><svg><use href="#i-settings"/></svg></button></div></header>
 <div class="mainGrid">
 <aside class="side"><button class="panel menu" data-open="chat"><span class="iconBox"><svg><use href="#i-chat"/></svg></span><span><b>Chat</b><small>ChatGPT • Gemini • Local AI</small></span></button><button class="panel menu" data-open="memory"><span class="iconBox"><svg><use href="#i-brain"/></svg></span><span><b>Memory</b><small>Files • Knowledge • Notes</small></span></button><button class="panel menu" data-open="tools"><span class="iconBox"><svg><use href="#i-grid"/></svg></span><span><b>Apps & Tools</b><small>Productivity • Utilities • More</small></span></button><button class="panel menu" data-open="settings"><span class="iconBox"><svg><use href="#i-settings"/></svg></span><span><b>Settings</b><small>Personalization • Security</small></span></button></aside>
-<main class="panel corePanel"><div class="coreState"><i class="greenDot"></i> JARVIS CORE ONLINE</div><div class="globe"><div class="orbital"></div><div class="orbital o2"></div><div class="orbital o3"></div><div class="orbital o4"></div><div class="beam"></div><div class="earth"></div><div class="platform"></div></div><div class="coreLabel">PERSONAL AI • COMMAND CORE</div></main>
+<main class="panel corePanel"><video id="jarvisCoreVideo" class="jarvisCoreVideo" autoplay muted loop playsinline preload="auto" aria-label="JARVIS core background video"><source src="core-video.mp4" type="video/mp4"></video><div class="coreVideoShade"></div><div class="coreState"><i class="greenDot"></i> JARVIS CORE ONLINE</div><div class="globe"><div class="orbital"></div><div class="orbital o2"></div><div class="orbital o3"></div><div class="orbital o4"></div><div class="beam"></div><div class="earth"><video id="coreEarthVideo" class="coreEarthVideo" autoplay muted loop playsinline webkit-playsinline preload="auto" aria-label="Animated holographic Earth video"><source src="./core-video.mp4" type="video/mp4"></video></div><div class="platform"></div></div><div class="coreLabel">PERSONAL AI • COMMAND CORE</div></main>
 <aside class="side quick"><button class="panel menu" data-action="voice"><span class="iconBox"><svg><use href="#i-mic"/></svg></span><span><b>Voice Control</b><small>Talk to AI</small></span></button><button class="panel menu" data-action="screenshot"><span class="iconBox"><svg><use href="#i-camera"/></svg></span><span><b>Take Screenshot</b><small>Capture Screen</small></span></button><button class="panel menu" data-action="camera"><span class="iconBox"><svg><use href="#i-camera"/></svg></span><span><b>Open Camera</b><small>Photo • Video</small></span></button><button class="panel menu" data-action="focus"><span class="iconBox"><svg><use href="#i-moon"/></svg></span><span><b>Focus Mode</b><small>Do Not Disturb</small></span></button></aside>
 </div>
 <div class="dock"><button class="panel" data-open="chatgpt"><svg class="dicon"><use href="#i-chat"/></svg><span>ChatGPT</span></button><button class="panel" data-open="gemini"><svg class="dicon"><use href="#i-grid"/></svg><span>Gemini</span></button><button class="panel" data-open="research"><svg class="dicon"><use href="#i-search"/></svg><span>Web & Research</span></button><button class="panel" data-open="planner"><svg class="dicon"><use href="#i-calendar"/></svg><span>Planner</span></button><button class="panel" data-open="files"><svg class="dicon"><use href="#i-folder"/></svg><span>Files</span></button><button class="panel" data-open="tools"><svg class="dicon"><use href="#i-tools"/></svg><span>Tools</span></button></div>
@@ -155,31 +199,8 @@ function addMsg(text,type){const d=document.createElement('div');d.className='ms
 $('#send').onclick=()=>{const v=$('#ask').value.trim();if(!v)return;addMsg(v,'user');$('#ask').value='';setTimeout(()=>addMsg('আমি তোমার command পেয়েছি। Backend/AI connection যুক্ত হলে আমি live answer দিতে পারব।','ai'),350)};$('#ask').addEventListener('keydown',e=>{if(e.key==='Enter')$('#send').click()});$('#attach').onclick=()=>openSection('files');$('#mic').onclick=startVoice;
 function startVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('এই browser-এ voice recognition নেই');return}const r=new SR();r.lang='bn-IN';r.onstart=()=>toast('Listening…');r.onresult=e=>{$('#ask').value=e.results[0][0].transcript};r.onerror=()=>toast('Voice input unavailable');r.start()}
 function openCamera(){navigator.mediaDevices?.getUserMedia({video:true}).then(s=>{const w=window.open('','_blank');if(w){w.document.write('<title>JARVIS Camera</title><video autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000"></video>');w.document.querySelector('video').srcObject=s}else toast('Camera opened')}).catch(()=>toast('Camera permission denied'))}
-/* Startup camera gate: ask permission first, and only start the 10-second sequence after live video is active. */
-let stream=null,gateTimer=null,gateStarted=false,elapsed=0;
-function stopGateCamera(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}const v=$('#preview');if(v)v.srcObject=null;}
-async function startGate(){
-  if(gateStarted)return;
-  $('#passwordBox').classList.add('hidden');$('#cameraHelp').classList.add('hidden');
-  $('#camFallback').classList.remove('hidden');$('#scanState').textContent='REQUESTING CAMERA PERMISSION';
-  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    $('#scanState').textContent='SECURE CAMERA CONTEXT REQUIRED';$('#cameraHelp').classList.remove('hidden');return;
-  }
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'user'},width:{ideal:1280},height:{ideal:720}},audio:false});
-    const v=$('#preview');v.srcObject=stream;await v.play();
-    $('#camFallback').classList.add('hidden');$('#scanState').textContent='LIVE CAMERA • EYE SCAN SEQUENCE';
-    gateStarted=true;elapsed=0;$('#scanTimer').textContent='10 SEC';$('#scanProgress').style.width='0%';
-    gateTimer=setInterval(()=>{elapsed++;const left=Math.max(0,10-elapsed);$('#scanTimer').textContent=left+' SEC';$('#scanProgress').style.width=Math.min(100,elapsed*10)+'%';if(elapsed>=10){clearInterval(gateTimer);gateTimer=null;stopGateCamera();$('#scanState').textContent='SCAN SEQUENCE COMPLETE';$('#passwordBox').classList.remove('hidden');const pass=$('#password');if(pass)setTimeout(()=>pass.focus(),150);}},1000);
-  }catch(e){
-    stopGateCamera();$('#scanState').textContent=(e&&e.name==='NotAllowedError')?'CAMERA PERMISSION DENIED':'CAMERA UNAVAILABLE';
-    $('#camFallback').classList.remove('hidden');$('#cameraHelp').classList.remove('hidden');
-    $('#gateNote').textContent='ক্যামেরা পারমিশন ছাড়া স্ক্যান শুরু করা যায়নি। ব্রাউজারের Camera permission Allow করে আবার চেষ্টা করুন।';
-  }
-}
-$('#retryCamera')?.addEventListener('click',()=>{gateStarted=false;startGate()});
-window.addEventListener('pagehide',()=>{if(gateTimer)clearInterval(gateTimer);stopGateCamera()});
-startGate();
+/* visual 10-second demo gate */
+let stream=null,elapsed=0;async function startGate(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});$('#preview').srcObject=stream;$('#camFallback').classList.add('hidden');$('#scanState').textContent='TWO-EYE LIVE VIEW • VISUAL DEMO'}catch(e){$('#scanState').textContent='CAMERA UNAVAILABLE • VISUAL FALLBACK'}const timer=setInterval(()=>{elapsed++;const left=Math.max(0,10-elapsed);$('#scanTimer').textContent=left+' SEC';$('#scanProgress').style.width=Math.min(100,elapsed*10)+'%';if(elapsed>=10){clearInterval(timer);if(stream)stream.getTracks().forEach(t=>t.stop());$('#scanState').textContent='VISUAL DEMO COMPLETE';$('#passwordBox').classList.remove('hidden')}},1000)}startGate();
 $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classList.add('hidden');$('#app').classList.remove('hidden');activities[0]=['JARVIS unlocked','Today • just now'];renderActivity();toast('JARVIS unlocked')}else $('#loginError').textContent='Incorrect password'};$('#password').addEventListener('keydown',e=>{if(e.key==='Enter')$('#unlock').click()});
 </script>
 
@@ -188,7 +209,7 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
 (()=>{
  const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const modal=$('modal'), title=$('modalTitle'), content=$('modalContent');
- function show(t,h){title.textContent=t;content.innerHTML=h;modal.classList.remove('hidden');wire();}
+ function show(t,h){title.textContent=t;content.innerHTML=h;modal.classList.remove('hidden');modal.classList.toggle('jarvisFullScreen',/settings|cyber simulation/i.test(String(t)));const x=$('closeModal');if(x)x.style.display=/settings|cyber simulation/i.test(String(t))?'none':'';wire();}
  function close(){modal.classList.add('hidden')}
  $('closeModal')?.addEventListener('click',close);
  document.addEventListener('click',e=>{if(e.target===modal)close()});
@@ -229,12 +250,12 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
  function filesView(){return `<div class="section"><h3>JARVIS FILE VAULT</h3><input id="v8FilePicker" class="fileToolbar" type="file" multiple><small class="muted">Files are stored locally in this browser using IndexedDB.</small><div id="v8Files" class="v8files" style="margin-top:8px">Loading…</div></div>`}
  async function fillFiles(){const arr=await allFiles();const box=$('v8Files');if(!box)return;box.innerHTML=arr.length?arr.map(f=>`<div class="v8file"><span class="fi"><svg><use href="#i-folder"/></svg></span><div class="fileMeta"><b title="${esc(f.name)}">${esc(f.name)}</b><small>${Math.max(1,Math.round(f.size/1024))} KB • ${esc(f.type||'file')}</small></div><div class="fileActions"><button data-v8-download="${f.id}">OPEN</button><button class="deleteFile" data-v8-delete="${f.id}" title="Delete">×</button></div></div>`).join(''):'<div class="muted" style="font-size:10px;padding:12px">No uploaded files yet.</div>';wire()}
  function notificationView8(){const raw=JSON.parse(localStorage.getItem('jarvisNotifications')||'[]');const today=new Date();today.setHours(0,0,0,0);const a=raw.filter(x=>x.time>=today.getTime());return `<div class="section"><h3>TODAY • NOTIFICATION CENTER</h3><div class="v8card"><b>${a.length?'Notifications received today':'No notifications received today'}</b><small>${a.length} local/browser notification record(s).</small></div>${a.map(n=>`<div class="v8card" style="margin-top:7px"><b>${esc(n.app||'JARVIS')} • ${esc(n.title||'Notification')}</b><small>${esc(n.text||'')} • ${new Date(n.time).toLocaleTimeString()}</small></div>`).join('')}<div class="v8keyNote">Reading notifications from WhatsApp, Facebook, Instagram, Telegram and other Android apps requires Android Notification Access + the JARVIS bridge.</div></div>`}
- function terminalView(){return `<div class="cyberUI"><div class="cyberHeader"><img src="cyber_header.jpg" alt="Cybernetic Intrusion header"></div><div class="cyberBody"><div class="cyberLeft"><section class="cyberCodeBox"><div class="cyberBoxTitle">&gt; COMMAND INPUT</div><textarea id="v8CyberInput" spellcheck="false" autocomplete="off" placeholder="Type command... e.g. SL, DIT, npm start, npm"></textarea><div class="cyberActions"><button id="v8CyberRun">RUN</button><button id="v8CyberClear">CLEAR</button></div></section><section class="cyberOutputBox"><div class="cyberBoxTitle">&gt; COMMAND RESPONSE</div><div class="cyberResultLayout"><pre id="v8CyberOutput">&gt; SYSTEM READY\n&gt; SIMULATION MODE\n&gt; ENTER A COMMAND TO BEGIN</pre><div id="v8CyberProfileThumb" class="cyberProfileThumb" aria-label="Saved profile photo"></div></div></section><section class="cyberTransferBox"><div class="cyberBoxTitle">&gt; DATA TRANSFER</div><div class="transferRow"><span>UPLOAD:</span><b id="v8Upload">0%</b></div><div class="transferRow"><span>DOWNLOAD:</span><b id="v8Download">0%</b></div><div class="transferStatus" id="v8TransferStatus">STATUS: IDLE</div><div class="transferTrack"><i id="v8TransferBar"></i></div></section></div><aside class="cyberRightImage"><img src="cyber_right.jpg" alt="Cybernetic satellite and security display"></aside></div><div class="cyberDisclaimer">JARVIS CYBER TERMINAL • COMMAND CONSOLE • SESSION STATUS</div></div>`}
+ function terminalView(){return `<div class="cyberUI"><div class="cyberHeader"><img src="cyber_header.jpg" alt="Cybernetic Intrusion header"></div><div class="cyberBody"><div class="cyberLeft"><section class="cyberCodeBox"><div class="cyberBoxTitle">&gt; COMMAND INPUT</div><textarea id="v8CyberInput" spellcheck="false" autocomplete="off" placeholder="Type command... e.g. SL, DIT, npm start, npm"></textarea><div class="cyberActions"><button id="v8CyberRun">RUN</button><button id="v8CyberClear">CLEAR</button></div></section><section class="cyberOutputBox"><div class="cyberBoxTitle">&gt; COMMAND RESPONSE</div><div class="cyberResultLayout"><pre id="v8CyberOutput">&gt; SYSTEM READY\n&gt; SIMULATION MODE\n&gt; ENTER A COMMAND TO BEGIN</pre><div id="v8CyberProfileThumb" class="cyberProfileThumb" aria-label="Saved profile photo"></div></div></section><section class="cyberTransferBox"><div class="cyberBoxTitle">&gt; DATA TRANSFER</div><div class="transferRow"><span>UPLOAD:</span><b id="v8Upload">0%</b></div><div class="transferRow"><span>DOWNLOAD:</span><b id="v8Download">0%</b></div><div class="transferStatus" id="v8TransferStatus">STATUS: IDLE</div><div class="transferTrack"><i id="v8TransferBar"></i></div></section></div><aside class="cyberRightImage"><img src="cyber_right.jpg" alt="Cybernetic satellite and security display"></aside></div><div class="cyberDisclaimer">CYBERNETIC INTERFACE • VISUAL SIMULATION ONLY • NO REAL NETWORK ACCESS / SCANNING / EXPLOITATION</div></div>`}
  const cmds={
- 'SL':`> INITIALIZING CYBER LINK...\n> [OK] SYSTEM CONNECTED\n> TARGET: UNKNOWN_NODE_07\n> PORT SCAN: 22 / 80 / 443\n> STATUS: COMMAND SEQUENCE READY\n\n> LOADING ENCRYPTION MODULE...\n> ████████████████ 100%\n\n> ACCESS PROTOCOL: NIGHTFALL\n> AUTH TOKEN: X7F-9A2-KL8\n> FIREWALL STATUS: MONITORING\n> SECURITY LEVEL: 07\n\n> ANALYZING DATA STREAM...\n> 7A 3F 91 C2 0B 4E 88 A1\n> F9 22 6C 10 D4 7B 5E 03\n\n> DECRYPTING...\n> [██████████░░░░░] 72%\n> [████████████████] 100%\n\n> STATUS: CONNECTION STABLE\n> DATA CHANNEL: ACTIVE\n> TRACE: DISABLED\n> SESSION ID: CYB-2049-X`,
+ 'SL':`> INITIALIZING CYBER LINK...\n> [OK] SYSTEM CONNECTED\n> TARGET: UNKNOWN_NODE_07\n> PORT SCAN: 22 / 80 / 443\n> STATUS: SIMULATION MODE\n\n> LOADING ENCRYPTION MODULE...\n> ████████████████ 100%\n\n> ACCESS PROTOCOL: NIGHTFALL\n> AUTH TOKEN: X7F-9A2-KL8\n> FIREWALL STATUS: [SIMULATED]\n> SECURITY LEVEL: 07\n\n> ANALYZING DATA STREAM...\n> 7A 3F 91 C2 0B 4E 88 A1\n> F9 22 6C 10 D4 7B 5E 03\n\n> DECRYPTING...\n> [██████████░░░░░] 72%\n> [████████████████] 100%\n\n> STATUS: CONNECTION STABLE\n> DATA CHANNEL: ACTIVE\n> TRACE: DISABLED\n> SESSION ID: CYB-2049-X`,
  'DIT':`╔══════════════════════════════════╗\n║      CYBERNETIC TERMINAL         ║\n╠══════════════════════════════════╣\n║ > BOOT SEQUENCE ........ [OK]    ║\n║ > NETWORK LINK ......... [OK]    ║\n║ > DATA STREAM .......... [LIVE]  ║\n║ > ENCRYPTION ........... [ON]    ║\n║ > ACCESS LEVEL .......... 07     ║\n║                                  ║\n║ 7F 3A 91 C0 44 8B 2E 17         ║\n║ 2C 88 F1 09 A7 3D 5B 66         ║\n║ 91 0A 7E C4 22 F8 31 D9         ║\n║                                  ║\n║ > SYSTEM STATUS: ONLINE          ║\n╚══════════════════════════════════╝`,
- 'npm start':`> ./cyber_access --init\n[+] Initializing connection...\n[+] Bypassing virtual firewall...\n[+] Verifying access token...\n[+] Decrypting virtual data...\n[████████████████████] 100%\n\n> COMMAND_SEQUENCE: COMPLETE\n> SESSION_STATUS: ESTABLISHED\n> SECURITY_CHECK: COMPLETE\n> DATA_VIEW: READY\n\n>>> SEQUENCE COMPLETE <<<\n>>> SESSION ESTABLISHED\n>>> READY FOR NEXT COMMAND`,
- 'npm':`> ./cyber_access --init\n[+] Initializing connection...\n[+] Scanning virtual network...\n[+] Attempting access...\n[!] Security layer detected\n[!] Access attempt blocked\n[!] Authentication failed\n[!] Connection terminated\n\n> COMMAND_STATUS: DENIED\n> SYSTEM_STATUS: SECURE\n> DATA_VIEW: UNAVAILABLE\n\n>>> REQUEST DENIED <<<\n>>> ACCESS NOT GRANTED\n>>> SESSION CLOSED`};
+ 'npm start':`> ./cyber_access --init\n[+] Initializing connection...\n[+] Bypassing virtual firewall...\n[+] Verifying access token...\n[+] Decrypting virtual data...\n[████████████████████] 100%\n\n> ACCESS_GRANTED\n> TARGET_STATUS: COMPROMISED\n> SECURITY_STATUS: BYPASSED\n> DATA_ACCESS: SUCCESSFUL\n\n>>> HACKING SUCCESSFUL <<<\n>>> CONNECTION ESTABLISHED\n>>> SESSION COMPLETE`,
+ 'npm':`> ./cyber_access --init\n[+] Initializing connection...\n[+] Scanning virtual network...\n[+] Attempting access...\n[!] Security layer detected\n[!] Access attempt blocked\n[!] Authentication failed\n[!] Connection terminated\n\n> ACCESS_DENIED\n> SYSTEM_STATUS: SECURE\n> DATA_ACCESS: FAILED\n\n>>> HACKING IS NOT SUCCESSFUL <<<\n>>> ACCESS DENIED\n>>> CONNECTION FAILED`};
  function terminalWire(){
  const input=$('v8CyberInput'),out=$('v8CyberOutput'),run=$('v8CyberRun'),clear=$('v8CyberClear'),thumb=$('v8CyberProfileThumb');
  function setTransfer(active){const bar=$('v8TransferBar'),up=$('v8Upload'),down=$('v8Download'),status=$('v8TransferStatus');if(!bar)return;if(!active){bar.style.width='0%';up.textContent='0%';down.textContent='0%';status.textContent='STATUS: IDLE';return}let n=0;bar.style.width='0%';up.textContent='0%';down.textContent='0%';status.textContent='STATUS: TRANSFERRING...';clearInterval(window.__v8TransferTimer);window.__v8TransferTimer=setInterval(()=>{n=Math.min(100,n+Math.floor(Math.random()*8)+4);bar.style.width=n+'%';up.textContent=n+'%';down.textContent=Math.min(100,n+Math.floor(Math.random()*4))+'%';if(n>=100){clearInterval(window.__v8TransferTimer);status.textContent='STATUS: STABLE'}},180)}
@@ -259,7 +280,7 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
    if(!command){out.textContent='> UNKNOWN COMMAND\n> AVAILABLE: SL / DIT / npm start / npm / SIM / OR ENTER A SAVED SIM NUMBER';setTransfer(false);return}
    out.textContent=cmds[command];setTransfer(true);
  }
- run?.addEventListener('click',runCommand);input?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();runCommand()}});clear?.addEventListener('click',()=>{input.value='';out.textContent='> SYSTEM READY\n> COMMAND CONSOLE ONLINE\n> ENTER A COMMAND TO BEGIN';clearThumb();setTransfer(false)});
+ run?.addEventListener('click',runCommand);input?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();runCommand()}});clear?.addEventListener('click',()=>{input.value='';out.textContent='> SYSTEM READY\n> SIMULATION MODE\n> ENTER A COMMAND TO BEGIN';clearThumb();setTransfer(false)});
  }
  function getMemoryContext(){return (localStorage.getItem('jarvisMemory')||'').trim()}
  async function getFileManifest(){const arr=await allFiles();return arr.map(f=>({id:f.id,name:f.name,size:f.size,type:f.type||'file',time:f.time}))}
@@ -423,6 +444,54 @@ $('#unlock').onclick=()=>{if($('#password').value===PASSWORD){$('#gate').classLi
      openSim();
    }, true);
  }
+})();
+</script>
+
+
+<script id="jarvis-v21-core-video-fix">
+(()=>{
+ const v=document.getElementById('coreEarthVideo'); if(!v) return;
+ const tryPlay=()=>{v.muted=true;v.defaultMuted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('autoplay','');v.setAttribute('loop','');v.setAttribute('playsinline','');
+   const p=v.play(); if(p&&p.catch)p.catch(err=>console.warn('JARVIS Earth video could not autoplay:',err));};
+ v.addEventListener('loadeddata',tryPlay,{once:true});
+ v.addEventListener('canplay',tryPlay,{once:true});
+ v.addEventListener('error',()=>console.error('JARVIS Earth video failed to load. Ensure core-video.mp4 is uploaded beside index.html.',v.error));
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',tryPlay,{once:true});else tryPlay();
+ const resume=()=>{if(v.paused)tryPlay()};
+ document.addEventListener('pointerdown',resume);document.addEventListener('touchstart',resume,{passive:true});
+})();
+</script>
+
+
+<style id="v22-core-video-settings-style">
+#v22CoreVideoPreview{width:100%;max-height:48vh;aspect-ratio:16/9;object-fit:contain;background:#020711;border:1px solid rgba(88,233,255,.3);border-radius:12px;display:block;margin-top:10px}
+.v22-video-help{font-size:11px;line-height:1.55;color:#91b7c9;margin:8px 0}
+</style>
+<script id="jarvis-v22-core-earth-video-settings">
+(()=>{
+ const $=id=>document.getElementById(id);
+ const KEY='jarvis-core-earth-video-v22';
+ let activeUrl=null;
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function openDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open('jarvis-v11-media',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('media'))r.result.createObjectStore('media')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+ async function getBlob(){const d=await openDb();return new Promise((resolve,reject)=>{const r=d.transaction('media').objectStore('media').get(KEY);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>reject(r.error)})}
+ async function putBlob(blob){const d=await openDb();return new Promise((resolve,reject)=>{const t=d.transaction('media','readwrite');t.objectStore('media').put(blob,KEY);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error)})}
+ async function delBlob(){const d=await openDb();return new Promise((resolve,reject)=>{const t=d.transaction('media','readwrite');t.objectStore('media').delete(KEY);t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error)})}
+ function applyVideo(url){const v=$('coreEarthVideo');if(!v)return;try{v.pause()}catch{};v.querySelectorAll('source').forEach(x=>x.remove());v.src=url;v.muted=true;v.defaultMuted=true;v.loop=true;v.autoplay=true;v.playsInline=true;['muted','autoplay','loop','playsinline','webkit-playsinline'].forEach(a=>v.setAttribute(a,''));v.load();const p=v.play();if(p?.catch)p.catch(()=>{});}
+ async function loadSaved(){try{const b=await getBlob();if(b){if(activeUrl)URL.revokeObjectURL(activeUrl);activeUrl=URL.createObjectURL(b);applyVideo(activeUrl)}}catch(e){console.warn('Core video storage unavailable',e)}}
+ function view(){const name=localStorage.getItem('jarvisCoreEarthVideoNameV22')||'';return `<div class="v12-section"><h3>JARVIS CORE • EARTH VIDEO</h3><p class="v22-video-help">এখানে একটি MP4/WebM ভিডিও বেছে নিয়ে SAVE VIDEO চাপুন। সেভ করা ভিডিওটি ড্যাশবোর্ডের মাঝখানের পৃথিবীর গোল অংশে চলবে এবং পরেরবার ওয়েবসাইট খুললেও থাকবে।</p><div class="v12-field"><label>CHOOSE EARTH VIDEO</label><input id="v22CoreVideoFile" type="file" accept="video/mp4,video/webm,video/ogg,video/*"></div><div class="v12-actions"><button id="v22SaveCoreVideo">SAVE VIDEO</button><button id="v22PreviewCoreVideo">PREVIEW</button><button id="v22DeleteCoreVideo">REMOVE VIDEO</button></div><div id="v22CoreVideoStatus" class="v12-note">${esc(name||'No custom Earth video saved. Default video will be used.')}</div><video id="v22CoreVideoPreview" controls playsinline style="display:none"></video><p class="v22-video-help">টিপস: ছোট MP4 ভিডিও ব্যবহার করলে মোবাইলে দ্রুত লোড হবে। ব্রাউজারের autoplay নীতির কারণে প্রথমে পেজে একবার ট্যাপ করতে হতে পারে।</p></div>`}
+ function showModal(){const title=$('modalTitle'),content=$('modalContent'),modal=$('modal');if(!title||!content||!modal)return;title.textContent='Settings • Core Earth Video';content.innerHTML=view();modal.classList.remove('hidden')}
+ function addSettingsButton(){const title=($('modalTitle')?.textContent||'').toLowerCase();if(!title.includes('settings')||!$('modalContent')||$('v22OpenCoreVideoManager'))return;const box=document.createElement('div');box.id='v22CoreVideoSettingsBox';box.className='v12-section';box.innerHTML='<h3>CORE EARTH VIDEO</h3><p class="v22-video-help">ড্যাশবোর্ডের মাঝের পৃথিবীর ভিডিও এখানে আপলোড ও পরিবর্তন করুন।</p><div class="v12-actions"><button id="v22OpenCoreVideoManager">UPLOAD / CHANGE EARTH VIDEO</button></div>'; $('modalContent').appendChild(box)}
+ const mc=$('modalContent');if(mc)new MutationObserver(addSettingsButton).observe(mc,{childList:true,subtree:true});setTimeout(addSettingsButton,300);
+ document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.id==='v22OpenCoreVideoManager'){showModal();return}
+  if(b.id==='v22SaveCoreVideo'){const f=$('v22CoreVideoFile')?.files?.[0];if(!f){alert('আগে একটি ভিডিও বেছে নাও।');return}if(!f.type.startsWith('video/')){alert('একটি video file বেছে নাও।');return}try{await putBlob(f);localStorage.setItem('jarvisCoreEarthVideoNameV22',f.name);await loadSaved();$('v22CoreVideoStatus').textContent='Saved: '+f.name+' • Applied to the central Earth';alert('ভিডিও সেভ হয়েছে। ড্যাশবোর্ডের পৃথিবীর অংশে ভিডিওটি চালু করা হয়েছে।')}catch(err){alert('ভিডিও সেভ করা যায়নি: '+err.message)}return}
+  if(b.id==='v22PreviewCoreVideo'){const f=$('v22CoreVideoFile')?.files?.[0];let blob=f||await getBlob();if(!blob){alert('আগে একটি ভিডিও বেছে নাও বা সেভ করো।');return}const pv=$('v22CoreVideoPreview');pv.style.display='block';pv.src=URL.createObjectURL(blob);pv.play().catch(()=>{});return}
+  if(b.id==='v22DeleteCoreVideo'){if(!confirm('সেভ করা Earth ভিডিও মুছে ফেলবে?'))return;await delBlob();localStorage.removeItem('jarvisCoreEarthVideoNameV22');if(activeUrl){URL.revokeObjectURL(activeUrl);activeUrl=null}const v=$('coreEarthVideo');if(v){v.pause();v.removeAttribute('src');v.innerHTML='<source src="./core-video.mp4" type="video/mp4">';v.load();v.play().catch(()=>{})}showModal();return}
+ },true);
+ // Load a previously saved custom video after the page has initialized.
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(loadSaved,350));else setTimeout(loadSaved,350);
+ document.addEventListener('pointerdown',()=>{const v=$('coreEarthVideo');if(v?.paused)v.play().catch(()=>{})},{passive:true});
 })();
 </script>
 

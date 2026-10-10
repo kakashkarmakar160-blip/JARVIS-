@@ -27,6 +27,3 @@ Then open `http://localhost:3000`. For best browser storage and media-permission
 
 ## V14 hotfix: A button
 The bottom A button now explicitly replaces the older click handler and opens SIM NUMBER VERIFICATION. After extracting this ZIP, redeploy the updated site files to your hosting (for GitHub Pages, commit/push the updated index.html and assets); downloading the ZIP alone does not update an already-published website.
-
-## V18 camera startup fix
-The first screen requests camera permission before the 10-second scan sequence. The timer starts only after the camera stream is active. If opened from a `content://` file viewer, camera access may be unavailable; use the deployed HTTPS GitHub Pages URL in Chrome and allow Camera in site permissions. See `README-V18-CAMERA-UPDATE.txt`.
